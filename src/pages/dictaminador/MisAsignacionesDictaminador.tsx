@@ -629,10 +629,8 @@ function MisAsignacionesDictaminadorContent() {
     notify_approved_rejected: true,
   });
   const [privacy, setPrivacy] = useState<Privacy>({ show_name: true, show_email: false });
-  const [pwd, setPwd] = useState({ current_password: "", new_password: "" });
   const [openPrefs, setOpenPrefs] = useState(false);
   const [openPrivacy, setOpenPrivacy] = useState(false);
-  const [openPwd, setOpenPwd] = useState(false);
   const [rows, setRows] = useState<AssignedChapterRow[]>([]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"ALL" | ChapterStatus>("ALL");
@@ -1001,31 +999,6 @@ function MisAsignacionesDictaminadorContent() {
     }
   };
 
-  const changePassword = async () => {
-    if (!pwd.current_password || !pwd.new_password) {
-      alertService.warning("Completa ambos campos.");
-      return;
-    }
-    if (pwd.new_password.length < 8) {
-      alertService.warning("La nueva contraseña debe tener mínimo 8 caracteres.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setErrorMsg(null);
-      await api.post("/account/change-password", pwd, { headers: authHeaders() });
-      setPwd({ current_password: "", new_password: "" });
-      setOpenPwd(false);
-      alertService.success("Contraseña actualizada ✅");
-    } catch (err: any) {
-      if (handleAuthMaybe(err)) return;
-      showError(apiMsg(err, "No se pudo cambiar la contraseña."));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const logout = async () => {
     const result = await alertService.confirm("¿Seguro que quieres cerrar sesión?");
     if (result.isConfirmed) {
@@ -1207,28 +1180,6 @@ function MisAsignacionesDictaminadorContent() {
               </div>
 
               <div className={styles.actionList}>
-                <div className={styles.actionRow}>
-                  <div style={{ minWidth: 0 }}>
-                    <div className={styles.actionTitle}>
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-                        <Icon name="shield" /> Cambiar contraseña
-                      </span>
-                    </div>
-                    <div className={styles.actionSub}>Actualiza tu contraseña para mantener tu cuenta segura.</div>
-                  </div>
-                  <button
-                    type="button"
-                    className={styles.btnGhost}
-                    onClick={() => {
-                      setPwd({ current_password: "", new_password: "" });
-                      setOpenPwd(true);
-                    }}
-                    disabled={loading}
-                  >
-                    Cambiar
-                  </button>
-                </div>
-
                 <div className={styles.actionRow}>
                   <div style={{ minWidth: 0 }}>
                     <div className={styles.actionTitle}>
@@ -1514,40 +1465,6 @@ function MisAsignacionesDictaminadorContent() {
                 </button>
                 <button className={styles.btnPrimary} type="button" onClick={savePrivacy} disabled={loading}>
                   {loading ? "Guardando..." : "Guardar"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {openPwd && (
-          <div className={styles.overlay} onClick={() => setOpenPwd(false)}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-              <div className={styles.modalTitle}>Cambiar contraseña</div>
-              <div className={styles.modalHint}>Tu contraseña debe tener al menos 8 caracteres.</div>
-
-              <label className={styles.modalLabel}>Contraseña actual</label>
-              <input
-                className={styles.modalInput}
-                type="password"
-                value={pwd.current_password}
-                onChange={(e) => setPwd((s) => ({ ...s, current_password: e.target.value }))}
-              />
-
-              <label className={styles.modalLabel}>Nueva contraseña</label>
-              <input
-                className={styles.modalInput}
-                type="password"
-                value={pwd.new_password}
-                onChange={(e) => setPwd((s) => ({ ...s, new_password: e.target.value }))}
-              />
-
-              <div className={styles.modalActions}>
-                <button className={styles.btnGhost} type="button" onClick={() => setOpenPwd(false)}>
-                  Cancelar
-                </button>
-                <button className={styles.btnPrimary} type="button" onClick={changePassword} disabled={loading}>
-                  {loading ? "Actualizando..." : "Guardar"}
                 </button>
               </div>
             </div>
