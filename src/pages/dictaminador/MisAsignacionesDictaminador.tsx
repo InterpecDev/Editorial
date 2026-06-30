@@ -1247,48 +1247,6 @@ function MisAsignacionesDictaminadorContent() {
 
             <section className={styles.card}>
               <div className={styles.cardHead}>
-                <div className={styles.cardTitle}>Preferencias</div>
-                <div className={styles.cardHint}>Ajustes del panel</div>
-              </div>
-
-              <div className={styles.prefRow}>
-                <div style={{ minWidth: 0 }}>
-                  <div className={styles.actionTitle}>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-                      <Icon name="bell" /> Notificaciones por correo
-                    </span>
-                  </div>
-                  <div className={styles.actionSub}>
-                    Avisos cuando cambie el estado o se registren correcciones/decisiones.
-                  </div>
-                </div>
-                <button type="button" className={styles.btnGhost} onClick={() => setOpenPrefs(true)} disabled={loading}>
-                  Configurar
-                </button>
-              </div>
-
-              <div className={styles.prefRow}>
-                <div style={{ minWidth: 0 }}>
-                  <div className={styles.actionTitle}>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-                      <Icon name="privacy" /> Privacidad
-                    </span>
-                  </div>
-                  <div className={styles.actionSub}>Controla qué datos se muestran en tu perfil.</div>
-                </div>
-                <button
-                  type="button"
-                  className={styles.btnGhost}
-                  onClick={() => setOpenPrivacy(true)}
-                  disabled={loading}
-                >
-                  Ajustar
-                </button>
-              </div>
-            </section>
-
-            <section className={styles.card}>
-              <div className={styles.cardHead}>
                 <div className={styles.cardTitle}>Soporte</div>
                 <div className={styles.cardHint}>¿Necesitas ayuda?</div>
               </div>
