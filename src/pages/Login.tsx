@@ -228,7 +228,7 @@ export default function Login() {
           </h2>
 
           <p className={styles.heroSubtitle}>
-            Accede para administrar capítulos, versiones, dictámenes y evaluación con un flujo claro y profesional.
+            Accede para administrar capítulos, versiones, dictamenes y evaluación con un flujo claro y profesional.
           </p>
 
           <div className={styles.quoteCard}>
