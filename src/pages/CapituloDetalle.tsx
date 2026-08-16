@@ -3,8 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../services/api";
 import styles from "./CapituloDetalle.module.css";
 // ✅ IMPORTAR el componente de dictaminación
-import DictaminacionContent from "./dictaminador/DictaminacionContent";
-
 
 type Status =
   | "RECIBIDO"
