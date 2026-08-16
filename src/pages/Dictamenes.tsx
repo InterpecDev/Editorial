@@ -187,31 +187,65 @@ export default function Dictamenes() {
   return (
     <div className={styles.wrap}>
       <div className={styles.top}>
-        <div style={{ minWidth: 0 }}>
-          <h2 className={styles.h2}>Dictámenes</h2>
-          <p className={styles.p}>
-            Emite el documento con plantilla Word: editar datos, generar DOCX/PDF y descargar (con token).
-          </p>
+        <div className={styles.topCopy}>
+          <div className={styles.adminEyebrow}>
+            <span className={styles.adminEyebrowDot} />
+            PANEL EDITORIAL
+          </div>
+
+          <div className={styles.topTitleRow}>
+            <div>
+              <h2 className={styles.h2}>Gestión de dictámenes</h2>
+              <p className={styles.p}>
+                Supervisa decisiones editoriales, documentos generados y archivos de dictaminación.
+              </p>
+            </div>
+
+            <span className={styles.adminBadge}>Administrador</span>
+          </div>
         </div>
 
         <button className={styles.refreshBtn} onClick={load} disabled={loading}>
-          {loading ? "..." : "Recargar"}
+          <span className={styles.refreshIcon}>↻</span>
+          {loading ? "Cargando..." : "Actualizar"}
         </button>
       </div>
 
-      {loading ? <div className={styles.muted}>Cargando dictámenes...</div> : null}
+      {loading ? (
+        <div className={styles.loadingState}>
+          <div className={styles.loadingMark} />
+          <div>
+            <strong>Cargando dictámenes...</strong>
+            <span>Consultando información editorial.</span>
+          </div>
+        </div>
+      ) : null}
       {errorMsg ? <div className={styles.errorBox}>{errorMsg}</div> : null}
 
       <div className={styles.filtersCard}>
+        <div className={styles.filtersHeader}>
+          <div>
+            <div className={styles.sectionKicker}>FILTROS ADMINISTRATIVOS</div>
+            <div className={styles.filtersTitle}>Consultar dictámenes</div>
+          </div>
+
+          <div className={styles.resultsBadge}>
+            {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"}
+          </div>
+        </div>
+
         <div className={styles.filtersGrid}>
           <div className={styles.field}>
             <label className={styles.label}>Buscar</label>
-            <input
-              className={styles.input}
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Folio capítulo, folio dictamen, capítulo, evaluador..."
-            />
+            <div className={styles.searchShell}>
+              <span className={styles.searchIcon}>⌕</span>
+              <input
+                className={styles.input}
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Folio capítulo, folio dictamen, capítulo, evaluador..."
+              />
+            </div>
           </div>
 
           <div className={styles.field}>
@@ -260,6 +294,17 @@ export default function Dictamenes() {
         </div>
       </div>
 
+      <div className={styles.tableSectionHead}>
+        <div>
+          <div className={styles.sectionKicker}>REGISTRO EDITORIAL</div>
+          <div className={styles.tableSectionTitle}>Listado de dictámenes</div>
+        </div>
+
+        <span className={styles.tableCounter}>
+          {filtered.length}/{rows.length}
+        </span>
+      </div>
+
       <div className={styles.tableCard}>
         <div className={styles.tableScroll}>
           <table className={styles.table}>
@@ -292,7 +337,9 @@ export default function Dictamenes() {
 
                   <td className={styles.td}>{x.libro}</td>
                   <td className={styles.td}>{x.evaluador}</td>
-                  <td className={styles.td}>{x.promedio.toFixed(1)}</td>
+                  <td className={styles.td}>
+                    <span className={styles.scoreBadge}>{x.promedio.toFixed(1)}</span>
+                  </td>
 
                   <td className={styles.td}>
                     <span className={getDecisionPillClass(x.decision)}>{decisionLabel(x.decision)}</span>
@@ -311,6 +358,7 @@ export default function Dictamenes() {
                         type="button"
                         onClick={() => nav(`/dictamenes/${x.id}/documento`)}
                       >
+                        <span className={styles.actionIcon}>▤</span>
                         Documento
                       </button>
 
@@ -320,16 +368,8 @@ export default function Dictamenes() {
                         onClick={() => renderDoc(x.id)}
                         disabled={busyId === x.id}
                       >
+                        <span className={styles.actionIcon}>◇</span>
                         {busyId === x.id ? "..." : "Generar"}
-                      </button>
-
-                      <button
-                        className={styles.miniBtn}
-                        type="button"
-                        onClick={() => download(x, "pdf")}
-                        disabled={x.status === "BORRADOR" || busyId === x.id}
-                      >
-                        PDF
                       </button>
 
                       <button
@@ -338,6 +378,7 @@ export default function Dictamenes() {
                         onClick={() => download(x, "docx")}
                         disabled={x.status === "BORRADOR" || busyId === x.id}
                       >
+                        <span className={styles.actionIcon}>↓</span>
                         DOCX
                       </button>
                     </div>
@@ -352,13 +393,20 @@ export default function Dictamenes() {
               {filtered.length === 0 && (
                 <tr>
                   <td className={styles.td} colSpan={9}>
-                    No hay resultados.
+                    <div className={styles.emptyTable}>
+                      <strong>No hay resultados.</strong>
+                      <span>Prueba cambiando los filtros de búsqueda.</span>
+                    </div>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div className={styles.adminFootMark}>
+        Editorial · Panel administrativo
       </div>
     </div>
   );
