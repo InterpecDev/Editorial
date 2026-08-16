@@ -4442,3 +4442,568 @@
       none !important;
   }
 }
+
+
+
+/* ==========================================================
+   RESPONSIVE HARDENING · LOGIN
+   Desktop / Laptop / Tablet / Mobile / Small Mobile
+   Mantiene el diseño y funcionamiento existente
+   ========================================================== */
+
+/* Evita que padding, bordes o inputs provoquen desbordamientos */
+.page,
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.page {
+  width: 100%;
+  max-width: 100vw;
+}
+
+.left,
+.right,
+.centerCopy,
+.formShell,
+.form,
+.formHeader,
+.brandRow,
+.brandTextWrap,
+.quoteCard,
+.statsRow,
+.leftFooter,
+.footerRight,
+.inputWrap {
+  min-width: 0;
+}
+
+/* Inputs siempre permanecen dentro de la tarjeta */
+.inputWrap input,
+.inputWrap textarea,
+.inputWrap select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* ==========================================================
+   LAPTOP MEDIANO
+   ========================================================== */
+@media (max-width: 1280px) {
+  .page {
+    grid-template-columns:
+      minmax(0, 1.08fr)
+      minmax(390px, 0.92fr);
+  }
+
+  .left {
+    padding:
+      clamp(34px, 3.5vw, 52px)
+      clamp(30px, 4vw, 56px);
+  }
+
+  .right {
+    padding:
+      clamp(26px, 3vw, 48px);
+  }
+
+  .heroTitle {
+    font-size:
+      clamp(40px, 4.4vw, 62px);
+  }
+
+  .formShell {
+    width: min(100%, 430px);
+  }
+}
+
+/* ==========================================================
+   TABLET / NOTEBOOK ANGOSTA
+   ========================================================== */
+@media (max-width: 980px) {
+  .page {
+    min-height: 100dvh;
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .left,
+  .right {
+    width: 100%;
+  }
+
+  .left {
+    min-height: auto;
+  }
+
+  .centerCopy {
+    width: 100%;
+    max-width: 760px;
+  }
+
+  .heroTitle {
+    max-width: 760px;
+  }
+
+  .heroSubtitle,
+  .quoteCard {
+    max-width: 650px;
+  }
+
+  .right {
+    min-height: auto;
+    padding:
+      52px
+      clamp(20px, 5vw, 44px)
+      62px;
+  }
+
+  .formShell {
+    width: min(100%, 500px);
+    max-width: 500px;
+    transform: none !important;
+  }
+
+  .formHeader,
+  .form {
+    transform: none !important;
+  }
+
+  .footerRight {
+    flex-wrap: wrap;
+  }
+}
+
+/* ==========================================================
+   MOBILE GRANDE
+   ========================================================== */
+@media (max-width: 720px) {
+  .left {
+    padding:
+      28px
+      20px
+      32px;
+  }
+
+  .brandRow {
+    align-items: center;
+  }
+
+  .brandTextWrap {
+    max-width: calc(100vw - 100px);
+  }
+
+  .brandName,
+  .brandTag {
+    overflow-wrap: anywhere;
+  }
+
+  .centerCopy {
+    margin:
+      34px
+      0
+      12px;
+  }
+
+  .heroTitle {
+    max-width: 100%;
+    font-size:
+      clamp(34px, 9.6vw, 48px);
+    line-height: 1.04;
+    letter-spacing: -1.8px;
+    overflow-wrap: anywhere;
+  }
+
+  .heroAccent {
+    max-width: 100%;
+  }
+
+  .heroSubtitle {
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .quoteCard {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .statsRow {
+    width: 100%;
+  }
+
+  .stat {
+    min-width: 0;
+  }
+
+  .leftFooter {
+    width: 100%;
+  }
+
+  .footerRight {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .footerPill,
+  .editorialLink {
+    max-width: 100%;
+  }
+
+  .right {
+    padding:
+      38px
+      16px
+      46px;
+  }
+
+  .formShell {
+    width: 100%;
+    max-width: 500px;
+    padding:
+      34px
+      24px
+      30px;
+  }
+
+  .formHeader {
+    margin-bottom: 27px;
+  }
+
+  .formTitle {
+    font-size:
+      clamp(28px, 8vw, 34px);
+  }
+
+  .formSubtitle {
+    max-width: 100%;
+  }
+}
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+@media (max-width: 560px) {
+  .page {
+    display: block;
+  }
+
+  .left {
+    padding:
+      24px
+      16px
+      28px;
+  }
+
+  .brandRow {
+    gap: 11px;
+  }
+
+  .brandMark {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+  }
+
+  .brandTextWrap {
+    max-width: calc(100vw - 84px);
+  }
+
+  .brandName {
+    font-size: 11px;
+    letter-spacing: 3px;
+  }
+
+  .brandTag {
+    font-size: 7.5px;
+    letter-spacing: 1.6px;
+  }
+
+  .centerCopy {
+    margin:
+      30px
+      0
+      8px;
+  }
+
+  .heroTitle {
+    font-size:
+      clamp(32px, 10.5vw, 43px);
+    letter-spacing: -1.4px;
+  }
+
+  .heroSubtitle {
+    margin-top: 18px;
+    font-size: 13.5px;
+  }
+
+  .quoteCard {
+    margin-top: 24px;
+    padding:
+      20px
+      18px
+      20px
+      22px;
+    border-radius: 17px;
+  }
+
+  .quoteTop {
+    gap: 10px;
+  }
+
+  .quote {
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+
+  .quoteAuthor {
+    padding-left: 34px;
+    font-size: 11px;
+  }
+
+  .statsRow {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 17px 12px;
+  }
+
+  .statNum {
+    font-size: 27px;
+  }
+
+  .statLbl {
+    font-size: 9px;
+    letter-spacing: 1.2px;
+  }
+
+  .leftFooter {
+    gap: 12px;
+  }
+
+  .footerRight {
+    align-items: flex-start;
+  }
+
+  .editorialLink {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .right {
+    padding:
+      30px
+      12px
+      40px;
+  }
+
+  .formShell {
+    width: 100%;
+    max-width: none;
+    padding:
+      30px
+      18px
+      26px;
+    border-radius: 20px;
+  }
+
+  .formKicker {
+    max-width: 100%;
+    padding:
+      6px
+      10px;
+    font-size: 8px;
+    letter-spacing: 1.8px;
+  }
+
+  .formTitle {
+    font-size:
+      clamp(27px, 8.5vw, 31px);
+  }
+
+  .formSubtitle {
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+
+  .form {
+    gap: 18px;
+  }
+
+  .inputWrap {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+    gap: 10px;
+    padding:
+      0
+      12px;
+    border-radius: 13px;
+  }
+
+  .inputIcon {
+    flex: 0 0 auto;
+    font-size: 16px;
+  }
+
+  .eyeBtn {
+    flex: 0 0 auto;
+  }
+
+  .actionsRow {
+    width: 100%;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .actionsRow > * {
+    max-width: 100%;
+  }
+
+  .button {
+    width: 100%;
+    min-height: 53px;
+  }
+}
+
+/* ==========================================================
+   SMALL MOBILE
+   ========================================================== */
+@media (max-width: 390px) {
+  .left {
+    padding:
+      21px
+      13px
+      25px;
+  }
+
+  .right {
+    padding:
+      26px
+      9px
+      34px;
+  }
+
+  .brandMark {
+    width: 43px;
+    height: 43px;
+  }
+
+  .brandName {
+    font-size: 10px;
+    letter-spacing: 2.4px;
+  }
+
+  .brandTag {
+    letter-spacing: 1.2px;
+  }
+
+  .heroTitle {
+    font-size:
+      clamp(29px, 10.4vw, 34px);
+  }
+
+  .heroSubtitle {
+    font-size: 13px;
+  }
+
+  .quoteCard {
+    padding:
+      18px
+      15px
+      18px
+      19px;
+  }
+
+  .statsRow {
+    gap: 15px 9px;
+  }
+
+  .formShell {
+    padding:
+      28px
+      14px
+      24px;
+    border-radius: 18px;
+  }
+
+  .formTitle {
+    font-size: 27px;
+  }
+
+  .formKicker {
+    letter-spacing: 1.4px;
+  }
+
+  .inputWrap {
+    min-height: 50px;
+    padding:
+      0
+      10px;
+  }
+
+  .inputIcon {
+    font-size: 15px;
+  }
+
+  .eyeBtn {
+    padding:
+      6px
+      6px;
+  }
+}
+
+/* ==========================================================
+   ALTURA REDUCIDA EN ESCRITORIO
+   ========================================================== */
+@media (min-width: 981px) and (max-height: 760px) {
+  .left {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .centerCopy {
+    margin:
+      22px
+      0;
+  }
+
+  .quoteCard,
+  .statsRow {
+    margin-top: 22px;
+  }
+
+  .right {
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
+
+  .formShell {
+    padding:
+      34px
+      36px
+      31px;
+  }
+
+  .formHeader {
+    margin-bottom: 25px;
+  }
+
+  .form {
+    gap: 17px;
+  }
+
+  .inputWrap {
+    min-height: 52px;
+  }
+}
