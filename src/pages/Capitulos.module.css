@@ -22,20 +22,20 @@
   margin:0;
   font-size:20px;
   font-weight:1000;
-  color:#0B132B;
+  color:#0B1F3A;
   letter-spacing:-0.02em;
 }
 
 .p{
   margin:6px 0 0 0;
   font-size:13px;
-  color:#64748B;
+  color:#667085;
 }
 
 /* ===== EMPTY STATE ===== */
 .empty{
   padding:22px;
-  color:#64748B;
+  color:#667085;
   text-align:center;
 }
 
@@ -53,9 +53,9 @@
 /* ===== FILTERS CARD ===== */
 .filtersCard{
   background:
-    radial-gradient(900px 320px at 10% 0%, rgba(108,99,255,0.12), transparent 60%),
-    radial-gradient(900px 320px at 100% 10%, rgba(15,61,62,0.10), transparent 55%),
-    rgba(255,255,255,0.86);
+    radial-gradient(900px 320px at 8% 0%, rgba(212,175,55,0.14), transparent 58%),
+    radial-gradient(900px 320px at 100% 10%, rgba(11,31,58,0.10), transparent 56%),
+    linear-gradient(180deg, rgba(255,253,248,0.97), rgba(255,255,255,0.93));
   border:1px solid rgba(15,23,42,0.10);
   border-radius:20px;
   padding:14px;
@@ -81,7 +81,7 @@
 .label{
   font-size:12px;
   font-weight:1000;
-  color:#334155;
+  color:#344054;
 }
 
 /* Inputs */
@@ -98,8 +98,8 @@
 
 .input:focus,
 .inlineInput:focus{
-  border-color: rgba(108,99,255,0.65);
-  box-shadow: 0 0 0 4px rgba(108,99,255,0.15);
+  border-color: rgba(184,137,45,0.72);
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.16);
   background: rgba(255,255,255,0.98);
 }
 
@@ -118,7 +118,7 @@
 }
 
 .muted{
-  color:#64748B;
+  color:#667085;
   font-size:12px;
 }
 
@@ -142,14 +142,14 @@
 /* Variantes de chips por estado (premium) */
 .chipRecibido{
   background:#F1F5F9;
-  color:#334155;
+  color:#344054;
   border-color:#E2E8F0;
 }
 
 .chipAsignado{
-  background:#EEF2FF;
+  background:#FFF8E7;
   color:#3730A3;
-  border-color:#C7D2FE;
+  border-color:#E8D39C;
 }
 
 .chipEnviado,
@@ -174,9 +174,9 @@
 
 .chipRevisadoEditorial,
 .chipListoFirma{
-  background:#EEF2FF;
+  background:#FFF8E7;
   color:#3730A3;
-  border-color:#C7D2FE;
+  border-color:#E8D39C;
 }
 
 .chipFirmado,
@@ -201,9 +201,9 @@
   overflow-y:auto;
   max-height:600px;
   background:
-    radial-gradient(900px 320px at 20% 0%, rgba(255,107,107,0.08), transparent 60%),
-    radial-gradient(900px 320px at 95% 10%, rgba(108,99,255,0.10), transparent 55%),
-    rgba(255,255,255,0.88);
+    radial-gradient(920px 340px at 10% 0%, rgba(212,175,55,0.08), transparent 58%),
+    radial-gradient(900px 320px at 100% 0%, rgba(11,31,58,0.08), transparent 56%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,253,248,0.95));
   box-shadow: 0 18px 50px rgba(2,6,23,0.08);
   backdrop-filter: blur(14px);
   -webkit-overflow-scrolling: touch;
@@ -242,7 +242,7 @@
   padding:12px 12px;
   background: rgba(248,250,252,0.75);
   border-bottom:1px solid rgba(15,23,42,0.08);
-  color:#334155;
+  color:#344054;
   font-weight:1000;
   white-space:nowrap;
 }
@@ -251,7 +251,7 @@
   padding:12px 12px;
   border-bottom:1px solid rgba(15,23,42,0.06);
   font-size:13px;
-  color:#0B132B;
+  color:#0B1F3A;
   vertical-align:top;
 }
 
@@ -261,7 +261,7 @@
 
 .cellSub{
   font-size:11px;
-  color:#64748B;
+  color:#667085;
   margin-top:2px;
 }
 
@@ -300,9 +300,9 @@
 .pillAsignado,
 .pillRevisadoEditorial,
 .pillListoFirma{
-  background:#EEF2FF;
+  background:#FFF8E7;
   color:#3730A3;
-  border-color:#C7D2FE;
+  border-color:#E8D39C;
 }
 
 .pillReenviado{
@@ -319,7 +319,7 @@
 
 .pillDefault{
   background:#F1F5F9;
-  color:#334155;
+  color:#344054;
   border-color:#E2E8F0;
 }
 
@@ -335,19 +335,19 @@
   padding:10px 14px;
   border-radius:14px;
   border:none;
-  background: linear-gradient(135deg, #6C63FF 0%, #4F46E5 100%);
+  background: linear-gradient(135deg, #0B1F3A 0%, #173D61 62%, #B8892D 100%);
   color:#fff;
   cursor:pointer;
   font-weight:1000;
   letter-spacing: 0.01em;
-  box-shadow: 0 16px 44px rgba(108,99,255,0.35);
+  box-shadow: 0 16px 44px rgba(184,137,45,0.34);
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
 .primaryBtn:hover:not(:disabled){
   transform: translateY(-2px);
   filter: brightness(1.03);
-  box-shadow: 0 22px 56px rgba(108,99,255,0.45);
+  box-shadow: 0 22px 56px rgba(184,137,45,0.46);
 }
 
 .primaryBtn:active:not(:disabled){
@@ -371,7 +371,7 @@
   background: rgba(255,255,255,0.88);
   cursor:pointer;
   font-weight:1000;
-  color:#0B132B;
+  color:#0B1F3A;
   box-shadow: 0 12px 30px rgba(2,6,23,0.06);
   transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
@@ -400,7 +400,7 @@
 .ghostBtn:hover:not(:disabled),
 .ghostBtnSmall:hover:not(:disabled){
   background: rgba(255,255,255,0.98);
-  border-color: rgba(108,99,255,0.35);
+  border-color: rgba(184,137,45,0.34);
   transform: translateY(-1px);
 }
 
@@ -433,7 +433,7 @@
 .modalOverlay{
   position:fixed;
   inset:0;
-  background: rgba(2,6,23,0.45);
+  background: rgba(7,23,43,0.64);
   display:grid;
   place-items:center;
   padding:16px;
@@ -453,7 +453,7 @@
 
 .modalTitle{
   font-weight:1000;
-  color:#0B132B;
+  color:#0B1F3A;
   font-size:18px;
   margin-bottom:8px;
   letter-spacing:-0.02em;
@@ -461,14 +461,14 @@
 
 .modalHint{
   font-size:13px;
-  color:#64748B;
+  color:#667085;
   margin-bottom:12px;
 }
 
 .modalLabel{
   font-size:12px;
   font-weight:1000;
-  color:#334155;
+  color:#344054;
   margin-top:10px;
   display:block;
 }
@@ -493,15 +493,15 @@
 
 .modalInput:focus,
 .modalTextarea:focus{
-  border-color: rgba(108,99,255,0.65);
-  box-shadow: 0 0 0 4px rgba(108,99,255,0.15);
+  border-color: rgba(184,137,45,0.72);
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.16);
   background: rgba(255,255,255,0.98);
 }
 
 .modalInfo{
   margin-top:10px;
   font-size:13px;
-  color:#334155;
+  color:#344054;
   background: rgba(248,250,252,0.75);
   border:1px solid rgba(15,23,42,0.10);
   padding:12px;
@@ -628,5 +628,289 @@
   .modalInput,
   .modalTextarea{
     transition:none !important;
+  }
+}
+
+/* =========================================================
+   ADMIN PREMIUM · NAVY / ORO / MARFIL
+   Capa visual adicional para Capitulos.tsx
+   ========================================================= */
+
+.topCopy{
+  min-width:0;
+  flex:1;
+}
+
+.adminEyebrow,
+.sectionKicker{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#9B721F;
+}
+
+.adminEyebrow{
+  margin-bottom:7px;
+}
+
+.adminEyebrowDot{
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:#D4AF37;
+  box-shadow:0 0 0 4px rgba(212,175,55,.13);
+}
+
+.topTitleRow{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.adminBadge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(184,137,45,.28);
+  background:linear-gradient(135deg,#FFF9EA,#FFFDF8);
+  color:#8A651C;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.refreshIcon,
+.btnIcon{
+  font-size:15px;
+  line-height:1;
+  margin-right:5px;
+}
+
+.ghostBtn,
+.primaryBtn,
+.secondaryBtn,
+.linkBtn,
+.inlineBtn,
+.ghostBtnSmall{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.loadingMark{
+  width:34px;
+  height:34px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  border:3px solid rgba(11,31,58,.10);
+  border-top-color:#B8892D;
+  animation:adminSpin .8s linear infinite;
+}
+
+.empty{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-height:150px;
+}
+
+.empty strong{
+  color:#0B1F3A;
+}
+
+.empty span{
+  font-size:12px;
+  color:#667085;
+}
+
+@keyframes adminSpin{
+  to{ transform:rotate(360deg); }
+}
+
+.filtersCard{
+  position:relative;
+}
+
+.filtersHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.filtersTitle{
+  margin-top:3px;
+  color:#0B1F3A;
+  font-size:14px;
+  font-weight:1000;
+}
+
+.resultsBadge{
+  padding:6px 9px;
+  border-radius:999px;
+  border:1px solid rgba(184,137,45,.20);
+  background:#FFF9EA;
+  color:#8A651C;
+  font-size:10px;
+  font-weight:1000;
+  white-space:nowrap;
+}
+
+.searchShell{
+  position:relative;
+  width:100%;
+}
+
+.searchIcon{
+  position:absolute;
+  left:11px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#9B721F;
+  font-size:17px;
+  line-height:1;
+  pointer-events:none;
+  z-index:2;
+}
+
+.searchShell .input{
+  width:100%;
+  padding-left:36px;
+}
+
+.tableSectionHead{
+  margin-top:14px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.tableSectionTitle{
+  margin-top:3px;
+  color:#0B1F3A;
+  font-size:14px;
+  font-weight:1000;
+}
+
+.tableCounter{
+  min-width:52px;
+  padding:6px 9px;
+  border-radius:10px;
+  text-align:center;
+  background:linear-gradient(135deg,#0B1F3A,#173D61);
+  color:#FFFDF8;
+  font-size:10.5px;
+  font-weight:1000;
+  box-shadow:0 8px 20px rgba(11,31,58,.15);
+}
+
+.table tbody tr{
+  transition:background .16s ease;
+}
+
+.table tbody tr:hover{
+  background:linear-gradient(90deg,rgba(212,175,55,.055),rgba(11,31,58,.035));
+}
+
+.folioEditor{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.deadlineCell{
+  white-space:nowrap;
+  font-weight:800;
+  color:#475467;
+}
+
+.emptyTable{
+  padding:22px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  text-align:center;
+}
+
+.emptyTable strong{
+  color:#344054;
+}
+
+.emptyTable span{
+  color:#667085;
+  font-size:11px;
+}
+
+.modal{
+  position:relative;
+  overflow:hidden;
+}
+
+.modalTopLine{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:4px;
+  background:linear-gradient(90deg,#0B1F3A,#B8892D,#D4AF37);
+}
+
+.modalKicker{
+  color:#9B721F;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+
+.adminFootMark{
+  margin-top:10px;
+  display:flex;
+  justify-content:flex-end;
+  color:#9B721F;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+
+@media (max-width: 900px){
+  .filtersHeader,
+  .tableSectionHead{
+    align-items:flex-start;
+  }
+}
+
+@media (max-width: 600px){
+  .adminBadge{
+    font-size:9px;
+    padding:5px 8px;
+  }
+
+  .filtersHeader,
+  .tableSectionHead{
+    flex-direction:column;
+  }
+
+  .folioEditor{
+    align-items:stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .loadingMark{
+    animation:none;
   }
 }

@@ -338,12 +338,26 @@ export default function Capitulos() {
   return (
     <div className={styles.wrap}>
       <div className={styles.top}>
-        <div>
-          <h2 className={styles.h2}>Capítulos (Admin)</h2>
-          <p className={styles.p}>Lista global filtrable conectada al backend.</p>
+        <div className={styles.topCopy}>
+          <div className={styles.adminEyebrow}>
+            <span className={styles.adminEyebrowDot} />
+            PANEL EDITORIAL
+          </div>
+
+          <div className={styles.topTitleRow}>
+            <div>
+              <h2 className={styles.h2}>Gestión de capítulos</h2>
+              <p className={styles.p}>
+                Supervisa, filtra y administra los capítulos registrados en la plataforma.
+              </p>
+            </div>
+
+            <span className={styles.adminBadge}>Administrador</span>
+          </div>
         </div>
 
         <button className={styles.ghostBtn} type="button" onClick={reload} disabled={loading}>
+          <span className={styles.refreshIcon}>↻</span>
           {loading ? "Cargando..." : "Actualizar"}
         </button>
       </div>
@@ -351,11 +365,26 @@ export default function Capitulos() {
       {errorMsg && <div className={styles.errorBox}>{errorMsg}</div>}
 
       {loading ? (
-        <div className={styles.empty}>Cargando capítulos...</div>
+        <div className={styles.empty}>
+          <div className={styles.loadingMark} />
+          <strong>Cargando capítulos...</strong>
+          <span>Consultando información editorial.</span>
+        </div>
       ) : (
         <>
           {/* Filtros */}
           <div className={styles.filtersCard}>
+            <div className={styles.filtersHeader}>
+              <div>
+                <div className={styles.sectionKicker}>FILTROS ADMINISTRATIVOS</div>
+                <div className={styles.filtersTitle}>Consultar capítulos</div>
+              </div>
+
+              <div className={styles.resultsBadge}>
+                {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"}
+              </div>
+            </div>
+
             <div className={styles.filtersGrid}>
               <div className={styles.field}>
                 <label className={styles.label}>Libro</label>
@@ -390,12 +419,15 @@ export default function Capitulos() {
 
               <div className={styles.field}>
                 <label className={styles.label}>Buscar</label>
-                <input
-                  className={styles.input}
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  placeholder="Folio, título, autor, dictaminador..."
-                />
+                <div className={styles.searchShell}>
+                  <span className={styles.searchIcon}>⌕</span>
+                  <input
+                    className={styles.input}
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                    placeholder="Folio, título, autor, dictaminador..."
+                  />
+                </div>
               </div>
 
               <div className={styles.field}>
@@ -439,6 +471,15 @@ export default function Capitulos() {
           </div>
 
           {/* Tabla */}
+          <div className={styles.tableSectionHead}>
+            <div>
+              <div className={styles.sectionKicker}>REGISTRO EDITORIAL</div>
+              <div className={styles.tableSectionTitle}>Listado de capítulos</div>
+            </div>
+
+            <span className={styles.tableCounter}>{filtered.length}/{all.length}</span>
+          </div>
+
           <div className={styles.tableCard}>
             <table className={styles.table}>
               <thead>
@@ -464,7 +505,7 @@ export default function Capitulos() {
                     <tr key={x.id}>
                       {/* folio editable */}
                       <td className={styles.td}>
-                        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <div className={styles.folioEditor}>
                           <input
                             className={styles.inlineInput}
                             value={draft}
@@ -518,7 +559,9 @@ export default function Capitulos() {
 
                       <td className={styles.td}>{fmtDate(x.updatedAt)}</td>
 
-                      <td className={styles.td}>{x.deadlineAt ? fmtDate(x.deadlineAt) : "—"}</td>
+                      <td className={`${styles.td} ${styles.deadlineCell}`}>
+                        {x.deadlineAt ? fmtDate(x.deadlineAt) : "—"}
+                      </td>
 
                       <td className={styles.td}>
                         <div className={styles.actions}>
@@ -538,12 +581,19 @@ export default function Capitulos() {
                 {filtered.length === 0 && (
                   <tr>
                     <td className={styles.td} colSpan={9}>
-                      No hay resultados con esos filtros.
+                      <div className={styles.emptyTable}>
+                        <strong>No hay resultados con esos filtros.</strong>
+                        <span>Prueba cambiando los criterios de búsqueda.</span>
+                      </div>
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
+          </div>
+
+          <div className={styles.adminFootMark}>
+            Editorial · Panel administrativo
           </div>
         </>
       )}
@@ -552,6 +602,8 @@ export default function Capitulos() {
       {actionOpen && selected && actionType && (
         <div className={styles.modalOverlay} onClick={() => setActionOpen(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalTopLine} />
+            <div className={styles.modalKicker}>GESTIÓN EDITORIAL</div>
             <div className={styles.modalTitle}>Asignar dictaminador</div>
 
             <div className={styles.modalHint}>
