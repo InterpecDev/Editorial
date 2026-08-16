@@ -4,6 +4,10 @@
    ======================================== */
 
 /* ===== LAYOUT PRINCIPAL ===== */
+.wrap,
+.wrap *{
+  box-sizing:border-box;
+}
 .wrap{
   display:flex;
   flex-direction:column;
@@ -76,6 +80,7 @@
   display:flex;
   flex-direction:column;
   gap:6px;
+  min-width:0;
 }
 
 .label{
@@ -87,13 +92,22 @@
 /* Inputs */
 .input,
 .inlineInput{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+
   padding:10px 12px;
   border-radius:14px;
   border:1px solid rgba(15,23,42,0.14);
   outline:none;
   font-size:14px;
-  background: rgba(255,255,255,0.92);
-  transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, transform 0.16s ease;
+  background:rgba(255,255,255,0.92);
+
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease,
+    transform 0.16s ease;
 }
 
 .input:focus,
@@ -770,6 +784,7 @@
 .searchShell{
   position:relative;
   width:100%;
+  min-width:0;
 }
 
 .searchIcon{
@@ -786,6 +801,8 @@
 
 .searchShell .input{
   width:100%;
+  min-width:0;
+  box-sizing:border-box;
   padding-left:36px;
 }
 
