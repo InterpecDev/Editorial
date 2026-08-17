@@ -1331,3 +1331,44 @@ textarea.modalInput::placeholder {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Selector de capítulo para dictaminación */
+.chapterSelector {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #F8FAFC;
+  border-radius: 12px;
+  border: 1px solid #E8EDF4;
+}
+
+.selectorLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.selectorSelect {
+  width: 100%;
+  max-width: 500px;
+  padding: 10px 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0F172A;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.selectorSelect:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.emptyState {
+  padding: 20px;
+  text-align: center;
+}
