@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback, Suspense } from "react";
 import { api } from "../../services/api";
 import styles from "./MisAsignacionesDictaminador.module.css";
+import DictaminacionContent from "./DictaminacionContent";
 import { alertService } from "../../utils/alerts";
 
 /* =========================
@@ -33,6 +34,9 @@ type AssignedChapterApi = {
   deadline_at?: string | null;
   deadline_stage?: string | null;
   author_deadline_at?: string | null;
+  // ✅ NUEVO: campos del evaluador
+  evaluador_cvu?: string | null;
+  evaluador_name?: string | null;
 };
 
 type AssignedChapterRow = {
@@ -47,6 +51,9 @@ type AssignedChapterRow = {
   deadline_at?: string | null;
   deadline_stage?: string | null;
   author_deadline_at?: string | null;
+  // ✅ NUEVO: campos del evaluador
+  evaluador_cvu?: string | null;
+  evaluador_name?: string | null;
 };
 
 type Me = {
@@ -54,6 +61,7 @@ type Me = {
   name: string;
   email: string;
   role: "editorial" | "dictaminador" | "autor";
+  cvo_snii?: string;
 };
 
 type Preferences = {
@@ -68,7 +76,7 @@ type Privacy = {
   show_email: boolean;
 };
 
-type NavKey = "asignaciones" | "cuenta";
+type NavKey = "asignaciones" | "cuenta" | "dictaminacion";
 
 /* =========================
    Error Boundary
@@ -313,7 +321,8 @@ function Icon({
     | "shield"
     | "privacy"
     | "search"
-    | "eye";
+    | "eye"
+    | "file";
   tone?: "muted" | "light";
 }) {
   const color = tone === "light" ? "rgba(255,255,255,0.92)" : "rgba(71,85,105,0.95)";
@@ -423,6 +432,13 @@ function Icon({
         <svg viewBox="0 0 24 24" style={common} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
           <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
           <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+        </svg>
+      );
+    case "file":
+      return (
+        <svg viewBox="0 0 24 24" style={common} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+          <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z" />
+          <path d="M14 2v5h5" />
         </svg>
       );
   }
@@ -639,10 +655,14 @@ function MisAsignacionesDictaminadorContent() {
   const [selected, setSelected] = useState<AssignedChapterRow | null>(null);
   const [comment, setComment] = useState("");
   const [authorDeadline, setAuthorDeadline] = useState("");
+  
+  // NUEVOS ESTADOS para dictaminación
+  const [selectedChapter, setSelectedChapter] = useState<AssignedChapterRow | null>(null);
+  const [showDictamenForm, setShowDictamenForm] = useState(false);
 
   const authHeaders = useCallback(() => ({ Authorization: `Bearer ${getToken()}` }), []);
   const apiMsg = (err: any, fallback: string) => err?.response?.data?.detail || err?.message || fallback;
-
+  
   const showError = (msg: string) => {
     alertService.error(msg);
     setErrorMsg(msg);
@@ -670,6 +690,8 @@ function MisAsignacionesDictaminadorContent() {
   const loadMe = useCallback(async () => {
     try {
       const { data } = await api.get<Me>("/account/me", { headers: authHeaders() });
+      // Depuración: ver qué datos llegan del usuario
+    console.log("👤 Datos del usuario /account/me:", data);
       setMe(data);
     } catch (err: any) {
       if (handleAuthMaybe(err)) return;
@@ -716,6 +738,9 @@ function MisAsignacionesDictaminadorContent() {
         deadline_at: c.deadline_at ?? null,
         deadline_stage: c.deadline_stage ?? null,
         author_deadline_at: c.author_deadline_at ?? null,
+        // ✅ NUEVO: mapear campos del evaluador
+        evaluador_cvu: (c as any).evaluador_cvu ?? null,
+        evaluador_name: (c as any).evaluador_name ?? null,
       }));
 
       setRows(mapped);
@@ -1016,11 +1041,13 @@ function MisAsignacionesDictaminadorContent() {
     );
   }
 
-  const pageTitle = nav === "asignaciones" ? "Asignaciones" : "Mi Cuenta";
+  const pageTitle = nav === "asignaciones" ? "Asignaciones" : nav === "cuenta" ? "Mi Cuenta" : "Dictaminación";
   const pageSub =
     nav === "asignaciones"
       ? "Revisa capítulos, descarga archivos y registra dictámenes con trazabilidad."
-      : "Administra tu perfil, seguridad y preferencias del sistema.";
+      : nav === "cuenta"
+      ? "Administra tu perfil, seguridad y preferencias del sistema."
+      : "Genera y administra los dictámenes de los capítulos evaluados.";
 
   return (
     <div className={styles.shell}>
@@ -1058,6 +1085,18 @@ function MisAsignacionesDictaminadorContent() {
 
           <button
             type="button"
+            onClick={() => setNav("dictaminacion")}
+            className={`${styles.navBtn} ${nav === "dictaminacion" ? styles.navBtnActive : ""}`}
+          >
+            <span className={styles.navIcon}>
+              <Icon name="file" tone="light" />
+            </span>
+            <span>Dictaminación</span>
+            {nav === "dictaminacion" ? <span className={styles.navGlow} /> : null}
+          </button>
+
+          <button
+            type="button"
             onClick={() => setNav("cuenta")}
             className={`${styles.navBtn} ${nav === "cuenta" ? styles.navBtnActive : ""}`}
           >
@@ -1091,6 +1130,12 @@ function MisAsignacionesDictaminadorContent() {
               <button type="button" className={styles.btnGhost} onClick={loadAssignments} disabled={loading}>
                 <span style={{ display: "inline-flex", gap: 10, alignItems: "center" }}>
                   <Icon name="refresh" /> Actualizar
+                </span>
+              </button>
+            ) : nav === "dictaminacion" ? (
+              <button type="button" className={styles.btnGhost} onClick={loadAssignments} disabled={loading}>
+                <span style={{ display: "inline-flex", gap: 10, alignItems: "center" }}>
+                  <Icon name="refresh" /> Actualizar capítulos
                 </span>
               </button>
             ) : (
@@ -1137,6 +1182,60 @@ function MisAsignacionesDictaminadorContent() {
               <Stat label="Pendientes" value={stats.pendientes} sub="Por revisar" />
               <Stat label="Correcciones" value={stats.correcciones} sub="En espera" />
               <Stat label="Resueltos" value={stats.resueltos} sub="Aprobado / Rechazado" />
+            </div>
+          </div>
+        )}
+
+        {/* ===== SECCIÓN DICTAMINACIÓN ===== */}
+        {nav === "dictaminacion" && (
+          <div style={{ padding: "20px 24px" }}>
+            <div className={styles.card}>
+              <div className={styles.cardHead}>
+                <div className={styles.cardTitle}>Dictaminación</div>
+                <div className={styles.cardHint}>Genera y administra dictámenes</div>
+              </div>
+              
+              {/* Selector de capítulo */}
+              <div className={styles.chapterSelector}>
+                <label className={styles.selectorLabel}>Seleccionar capítulo para dictaminar:</label>
+                <select 
+                  className={styles.selectorSelect}
+                  value={selectedChapter?.id || ""}
+                  onChange={(e) => {
+                    const chapterId = Number(e.target.value);
+                    const chapter = rows.find(r => r.id === chapterId) || null;
+                    setSelectedChapter(chapter);
+                    setShowDictamenForm(!!chapter);
+                  }}
+                >
+                  <option value="">-- Selecciona un capítulo --</option>
+                  {rows.map((row) => (
+                    <option key={row.id} value={row.id}>
+                      {row.title} - {row.book_name || "Sin libro"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Formulario de dictamen solo si hay capítulo seleccionado */}
+              {showDictamenForm && selectedChapter ? (
+                <DictaminacionContent 
+                  chapterId={selectedChapter.id}
+                  chapterTitle={selectedChapter.title}
+                  evaluadorName={me?.name || ""}
+                  evaluadorCvu={
+                  selectedChapter.evaluador_cvu ||  // ← Primero del capítulo
+                  me?.cvo_snii ||                   // ← Luego del usuario
+                  ""                                // ← Fallback vacío
+                  }
+                />
+              ) : (
+                <div className={styles.emptyState}>
+                  <p style={{ textAlign: "center", color: "#64748B", padding: 40 }}>
+                    Selecciona un capítulo de la lista para comenzar a generar el dictamen.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1203,7 +1302,7 @@ function MisAsignacionesDictaminadorContent() {
               </div>
 
               <div className={styles.note}>
-                Si tienes problemas con una asignación, contacta al área editorial. Revisa “Asignaciones” para ver el
+                Si tienes problemas con una asignación, contacta al área editorial. Revisa "Asignaciones" para ver el
                 estado.
               </div>
 
@@ -1211,10 +1310,15 @@ function MisAsignacionesDictaminadorContent() {
                 <button type="button" className={styles.btnGhost} onClick={() => setNav("asignaciones")}>
                   Ir a Asignaciones
                 </button>
+                <button type="button" className={styles.btnGhost} onClick={() => setNav("dictaminacion")}>
+                  Ir a Dictaminación
+                </button>
               </div>
             </section>
           </div>
-        ) : (
+        ) : null}
+
+        {nav === "asignaciones" && (
           <div className={styles.gridMain}>
             <section className={styles.card}>
               <div className={styles.cardHeadRow}>
