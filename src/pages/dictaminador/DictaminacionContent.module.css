@@ -1,0 +1,485 @@
+/* src/components/dictaminador/DictaminacionContent.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0;
+}
+
+.card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid #E8EDF4;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.cardHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.chapterInfo {
+  font-size: 13px;
+  color: #64748B;
+  background: #F8FAFC;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+}
+
+.field input,
+.field textarea {
+  padding: 10px 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0F172A;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.field input:disabled,
+.field textarea:disabled {
+  background: #F8FAFC;
+  cursor: not-allowed;
+}
+
+/* Tipos */
+.tipoSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #F1F5F9;
+}
+
+.tipoSection > label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tipoGroup {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.tipoLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+}
+
+.tipoLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3B82F6;
+  cursor: pointer;
+}
+
+/* Criterios */
+.criteriosGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+}
+
+.criterioField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.criterioField label {
+  font-size: 14px;
+  color: #334155;
+  flex: 1;
+  min-width: 120px;
+}
+
+.criterioInput {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.criterioInput:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.criterioPts {
+  font-size: 13px;
+  color: #94A3B8;
+  min-width: 20px;
+}
+
+.totalSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #F1F5F9;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 15px;
+}
+
+.totalSection strong {
+  color: #0F172A;
+}
+
+.totalPts {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3B82F6;
+}
+
+.totalAprobado {
+  font-weight: 700;
+  color: #22C55E;
+}
+
+.totalRechazado {
+  font-weight: 700;
+  color: #EF4444;
+}
+
+/* Recomendación */
+.recomendacionGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+
+.recomendacionLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.recomendacionLabel:hover {
+  background: #F8FAFC;
+}
+
+.recomendacionLabel input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3B82F6;
+  cursor: pointer;
+}
+
+.selectedInfo {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #F8FAFC;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.selectedInfo strong {
+  color: #0F172A;
+}
+
+/* Comentarios */
+.comentariosTextarea {
+  min-height: 120px !important;
+}
+
+/* Conflicto */
+.conflictoSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #F1F5F9;
+}
+
+.conflictoSection > label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.conflictoGroup {
+  display: flex;
+  gap: 24px;
+}
+
+.conflictoLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+}
+
+.conflictoLabel input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3B82F6;
+  cursor: pointer;
+}
+
+/* Plantilla */
+.templateSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.templateUpload label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.fileInput {
+  padding: 8px 0;
+}
+
+.fileInput:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.templateStatus {
+  font-size: 14px;
+}
+
+.uploading {
+  color: #EAB308;
+}
+
+.success {
+  color: #22C55E;
+}
+
+.warning {
+  color: #EF4444;
+}
+
+/* Botones */
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.btnSave {
+  padding: 10px 24px;
+  background: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnSave:hover:not(:disabled) {
+  background: #2563EB;
+}
+
+.btnSave:disabled {
+  background: #94A3B8;
+  cursor: not-allowed;
+}
+
+.btnGenerate {
+  padding: 10px 24px;
+  background: #8B5CF6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnGenerate:hover:not(:disabled) {
+  background: #7C3AED;
+}
+
+.btnGenerate:disabled {
+  background: #94A3B8;
+  cursor: not-allowed;
+}
+
+.downloadSection {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.btnDownload {
+  padding: 8px 20px;
+  background: #F1F5F9;
+  color: #0F172A;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnDownload:hover:not(:disabled) {
+  background: #E2E8F0;
+}
+
+.btnDownload:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.infoMessage {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #FEF3C7;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #92400E;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .criteriosGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .recomendacionGroup {
+    grid-template-columns: 1fr;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+  }
+
+  .btnSave,
+  .btnGenerate {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .downloadSection {
+    flex-direction: column;
+  }
+
+  .btnDownload {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* DictaminacionContent.module.css */
+
+/* Role Badge */
+.roleBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+}
+
+.adminBadge {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dictaminadorBadge {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dictamenIdBadge {
+  font-size: 12px;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
