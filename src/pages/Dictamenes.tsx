@@ -15,7 +15,6 @@ type Row = {
   libro: string;
   evaluador: string;
   decision: Decision;
-  promedio: number;
   status: DictamenStatus;
   updatedAt: string;
 };
@@ -29,7 +28,6 @@ type AdminDictamenApi = {
   libro: string;
   evaluador: string;
   decision: Decision;
-  promedio: number;
   status: DictamenStatus;
   updatedAt?: string | null;
 };
@@ -88,7 +86,6 @@ export default function Dictamenes() {
         libro: d.libro ?? "—",
         evaluador: d.evaluador ?? "—",
         decision: d.decision,
-        promedio: Number(d.promedio ?? 0),
         status: d.status,
         updatedAt: (d.updatedAt || "").slice(0, 10),
       };
@@ -314,7 +311,6 @@ export default function Dictamenes() {
                 <th className={styles.th}>Capítulo</th>
                 <th className={styles.th}>Libro</th>
                 <th className={styles.th}>Evaluador</th>
-                <th className={styles.th}>Promedio</th>
                 <th className={styles.th}>Decisión</th>
                 <th className={styles.th}>Estatus</th>
                 <th className={styles.th}>Actualizado</th>
@@ -337,9 +333,6 @@ export default function Dictamenes() {
 
                   <td className={styles.td}>{x.libro}</td>
                   <td className={styles.td}>{x.evaluador}</td>
-                  <td className={styles.td}>
-                    <span className={styles.scoreBadge}>{x.promedio.toFixed(1)}</span>
-                  </td>
 
                   <td className={styles.td}>
                     <span className={getDecisionPillClass(x.decision)}>{decisionLabel(x.decision)}</span>
@@ -392,7 +385,7 @@ export default function Dictamenes() {
 
               {filtered.length === 0 && (
                 <tr>
-                  <td className={styles.td} colSpan={9}>
+                  <td className={styles.td} colSpan={8}>
                     <div className={styles.emptyTable}>
                       <strong>No hay resultados.</strong>
                       <span>Prueba cambiando los filtros de búsqueda.</span>
