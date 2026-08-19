@@ -3,6 +3,27 @@ import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import styles from "./PrivateLayout.module.css";
 import { alertService } from "../utils/alerts";
 
+// Iconos
+import {
+  Library,
+  BookOpen,
+  FileCheck,
+  PenTool,
+  Users,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  User,
+  Home,
+  FileText,
+  ClipboardList,
+  Plus,
+  Search,
+  Bell,
+  ChevronRight,
+} from "lucide-react";
+
 type Role = "editorial" | "dictaminador" | "autor";
 
 type User = {
@@ -11,6 +32,10 @@ type User = {
   email: string;
   role: Role;
 };
+
+// ============================================
+// FUNCIONES DE AUTENTICACIÓN
+// ============================================
 
 function base64UrlDecode(input: string) {
   const pad = "=".repeat((4 - (input.length % 4)) % 4);
@@ -86,11 +111,18 @@ function hasAccess(pathname: string, role: Role): boolean {
   return rule.roles.includes(role);
 }
 
+// ============================================
+// COMPONENTE PRINCIPAL
+// ============================================
+
 export default function PrivateLayout() {
   const nav = useNavigate();
   const location = useLocation();
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // ============================================
+  // EFECTOS
+  // ============================================
 
   useEffect(() => {
     return () => {
@@ -122,6 +154,10 @@ export default function PrivateLayout() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // ============================================
+  // VALIDACIÓN DE AUTENTICACIÓN
+  // ============================================
 
   const token = localStorage.getItem("token");
   const userRaw = localStorage.getItem("user");
@@ -158,6 +194,10 @@ export default function PrivateLayout() {
     guard = <Navigate to={defaultHomeByRole[user!.role]} replace />;
   }
 
+  // ============================================
+  // FUNCIONES
+  // ============================================
+
   const logout = async () => {
     alertService.close();
 
@@ -185,33 +225,44 @@ export default function PrivateLayout() {
     nav("/login", { replace: true });
   };
 
-  const go = (path: string) => {
-    setSidebarOpen(false);
-    nav(path);
-  };
-
-  const isStarts = (prefix: string) => location.pathname.startsWith(prefix);
+  // ============================================
+  // MENÚ BASADO EN ROL - SIN CONFIGURACIÓN
+  // ============================================
 
   const menu = useMemo(() => {
     if (!user) return [];
     if (user.role === "editorial") {
       return [
-        { label: "Libros", path: "/libros" },
-        { label: "Capítulos", path: "/capitulos" },
-        { label: "Dictámenes", path: "/dictamenes" },
-        { label: "Usuarios", path: "/usuarios" },
+        { label: "Libros", path: "/libros", icon: BookOpen },
+        { label: "Capítulos", path: "/capitulos", icon: FileCheck },
+        { label: "Dictámenes", path: "/dictamenes", icon: PenTool },
+        { label: "Usuarios", path: "/usuarios", icon: Users },
+        // ❌ ELIMINADO: Configuración
       ];
     }
-    if (user.role === "dictaminador") return [{ label: "Mis asignaciones", path: "/dictaminador" }];
-    return [{ label: "Mis envíos", path: "/autor/mis-envios" }];
+    if (user.role === "dictaminador") {
+      return [
+        { label: "Mis asignaciones", path: "/dictaminador", icon: ClipboardList },
+        // ❌ ELIMINADO: Configuración
+      ];
+    }
+    return [
+      { label: "Mis envíos", path: "/autor/mis-envios", icon: FileText },
+      // ❌ ELIMINADO: Configuración
+    ];
   }, [user]);
 
   const avatarLetter = (user?.name?.trim()?.[0] ?? "U").toUpperCase();
 
   if (guard) return guard;
 
+  if (!user) {
+    return <div>Cargando...</div>;
+  }
+
   return (
-    <div className={styles.shell} data-open={sidebarOpen ? "1" : "0"}>
+    <div className={styles.shell}>
+      {/* Overlay */}
       <button
         type="button"
         className={styles.overlay}
@@ -220,34 +271,41 @@ export default function PrivateLayout() {
         onClick={() => setSidebarOpen(false)}
       />
 
+      {/* Sidebar */}
       <aside className={styles.sidebar} data-open={sidebarOpen ? "1" : "0"}>
         <div className={styles.brand}>
-          <div className={styles.brandIcon}>E</div>
+          <div className={styles.brandIcon}>
+            <Library size={24} />
+          </div>
           <div className={styles.brandText}>
             <div className={styles.brandTitle}>Editorial</div>
             <div className={styles.brandSubtitle}>Panel</div>
           </div>
-
           <button
             type="button"
             className={styles.closeBtn}
             onClick={() => setSidebarOpen(false)}
             aria-label="Cerrar menú"
           >
-            ✕
+            <X size={18} />
           </button>
         </div>
 
         <nav className={styles.nav}>
           {menu.map((item) => {
-            const active = isStarts(item.path);
+            const Icon = item.icon;
+            const active = location.pathname.startsWith(item.path);
             return (
               <button
                 key={item.path}
                 className={`${styles.navItem} ${active ? styles.navItemActive : ""}`}
-                onClick={() => go(item.path)}
+                onClick={() => {
+                  setSidebarOpen(false);
+                  nav(item.path);
+                }}
                 type="button"
               >
+                <Icon className={styles.navIcon} size={20} />
                 {item.label}
               </button>
             );
@@ -258,22 +316,20 @@ export default function PrivateLayout() {
           <div className={styles.userBox}>
             <div className={styles.userAvatar}>{avatarLetter}</div>
             <div className={styles.userMeta}>
-              <div className={styles.userName}>{user?.name ?? "Usuario"}</div>
-              <div className={styles.userRole}>{user?.role ?? ""}</div>
+              <div className={styles.userName}>{user.name}</div>
+              <div className={styles.userRole}>{user.role}</div>
             </div>
           </div>
 
-          <button
-            className={styles.logoutBtn}
-            onClick={() => logout()}
-            type="button"
-          >
+          <button className={styles.logoutBtn} onClick={() => logout()} type="button">
+            <LogOut className={styles.btnIcon} size={18} />
             Salir
           </button>
         </div>
       </aside>
 
-      <main className={styles.main}>
+      {/* Main */}
+      <div className={styles.main}>
         <header className={styles.header}>
           <button
             type="button"
@@ -281,7 +337,7 @@ export default function PrivateLayout() {
             aria-label="Abrir menú"
             onClick={() => setSidebarOpen((v) => !v)}
           >
-            ☰
+            <Menu size={22} />
           </button>
         </header>
 
@@ -290,7 +346,7 @@ export default function PrivateLayout() {
             <Outlet />
           </section>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
