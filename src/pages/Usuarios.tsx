@@ -503,10 +503,6 @@ export default function Usuarios() {
     }
   };
 
-  const editUser = async (u: User) => {
-    await safeAlert.info(`Después: modal editar usuario\n\n${u.name} (${u.role})`, "Pendiente");
-  };
-
   // ---------------- FIRMA (DICTAMINADOR) ----------------
   const onSelectDictaminador = (id: string) => setSelectedDictId(id);
 
@@ -567,23 +563,9 @@ export default function Usuarios() {
   return (
     <div className={styles.wrap}>
       <div className={styles.top}>
-        <div className={styles.topCopy}>
-          <div className={styles.adminEyebrow}>
-            <span className={styles.adminEyebrowDot} />
-            PANEL EDITORIAL
-          </div>
-
-          <div className={styles.topTitleRow}>
-            <div>
-              <h2 className={styles.h2}>Gestión de usuarios y roles</h2>
-              <p className={styles.p}>
-                Administra dictaminadores, autores, accesos y firmas dentro de la plataforma.
-              </p>
-            </div>
-
-            <span className={styles.adminBadge}>Administrador</span>
-          </div>
-
+        <div>
+          <h2 className={styles.h2}>Usuarios y roles</h2>
+          <p className={styles.p}>Gestión de dictaminadores y autores. (solo editorial/admin)</p>
           {errorMsg && (
             <div className={styles.error} style={{ marginTop: 8 }}>
               {errorMsg}
@@ -591,20 +573,12 @@ export default function Usuarios() {
           )}
         </div>
 
-        <div className={styles.topActions}>
-          <span className={styles.syncStatus}>
-            <span className={`${styles.syncDot} ${loadingList ? styles.syncDotLoading : ""}`} />
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <span style={{ fontSize: 12, color: "#6B7280" }}>
             {loadingList ? "Cargando..." : "Actualizado"}
           </span>
-
-          <button
-            className={styles.linkBtn}
-            type="button"
-            onClick={fetchUsers}
-            disabled={loadingList}
-          >
-            <span className={styles.refreshIcon}>↻</span>
-            Actualizar
+          <button className={styles.linkBtn} type="button" onClick={fetchUsers} disabled={loadingList}>
+            Recargar
           </button>
         </div>
       </div>
@@ -616,7 +590,6 @@ export default function Usuarios() {
           onClick={() => setTab("DICTAMINADORES")}
           type="button"
         >
-          <span className={styles.tabIcon}>◆</span>
           Dictaminadores
         </button>
         <button
@@ -624,29 +597,16 @@ export default function Usuarios() {
           onClick={() => setTab("AUTORES")}
           type="button"
         >
-          <span className={styles.tabIcon}>◈</span>
           Autores
         </button>
       </div>
 
       <div className={styles.grid}>
         {/* Izquierda: Alta + Firma */}
-        <div className={styles.leftColumn}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {/* Alta */}
           <div className={styles.formCard}>
-            <div className={styles.cardHead}>
-              <div>
-                <div className={styles.sectionKicker}>ALTA DE USUARIO</div>
-                <h3 className={styles.h3}>
-                  Alta de {tab === "DICTAMINADORES" ? "dictaminadores" : "autores"}
-                </h3>
-              </div>
-
-              <span className={styles.cardBadge}>
-                {tab === "DICTAMINADORES" ? "Dictaminador" : "Autor"}
-              </span>
-            </div>
-
+            <h3 className={styles.h3}>Alta de {tab === "DICTAMINADORES" ? "dictaminadores" : "autores"}</h3>
             <p className={styles.p2}>
               Se crea un usuario con rol <b>{tab === "DICTAMINADORES" ? "dictaminador" : "autor"}</b>.
             </p>
@@ -693,7 +653,6 @@ export default function Usuarios() {
               )}
 
               <button className={styles.primaryBtn} onClick={addUser} disabled={savingUser} type="button">
-                <span className={styles.btnIcon}>＋</span>
                 {savingUser ? "Guardando..." : "Dar de alta"}
               </button>
 
@@ -701,189 +660,17 @@ export default function Usuarios() {
             </div>
           </div>
 
-          {/* Firma */}
-          <div className={styles.formCard}>
-            <div className={styles.cardHead}>
-              <div>
-                <div className={styles.sectionKicker}>FIRMA DIGITAL</div>
-                <h3 className={styles.h3}>Firma del dictaminador</h3>
-              </div>
-
-              <span className={styles.signatureBadge}>Firma</span>
-            </div>
-
-            <p className={styles.p2}>
-              Guarda la firma del dictaminador para usarla al <b>emitir constancias</b> o <b>cerrar dictámenes</b>.
-            </p>
-
-            <div className={styles.field}>
-              <label className={styles.label}>Selecciona dictaminador</label>
-              <select
-                className={styles.input}
-                value={selectedDictId}
-                onChange={(e) => onSelectDictaminador(e.target.value)}
-                disabled={dictaminadores.length === 0}
-              >
-                {dictaminadores.length === 0 ? (
-                  <option value="">No hay dictaminadores</option>
-                ) : (
-                  dictaminadores.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name} — {d.id}
-                    </option>
-                  ))
-                )}
-              </select>
-            </div>
-
-            <div className={styles.signatureRow}>
-              <div className={styles.signatureBox}>
-                <div className={styles.signatureTitleRow}>
-                  <span className={styles.signatureMiniIcon}>◫</span>
-                  <div className={styles.signatureTitle}>Vista previa</div>
-                </div>
-                {signaturePreview ? (
-                  <img src={signaturePreview} alt="Firma" className={styles.signaturePreview} />
-                ) : (
-                  <div className={styles.signatureEmpty}>Sin firma guardada</div>
-                )}
-
-                <div className={styles.signatureHint}>
-                  {savingSignature ? <b>Guardando firma...</b> : <span>Sube PNG/JPG o dibuja y guarda.</span>}
-                </div>
-
-                <div className={styles.actions}>
-                  <button
-                    className={styles.linkBtn}
-                    type="button"
-                    onClick={async () => {
-                      if (!selectedDict) return;
-                      try {
-                        await navigator.clipboard?.writeText(selectedDict.id);
-                        safeAlert.toastSuccess("ID copiado ✅");
-                      } catch (e) {
-                        console.error("Error al copiar:", e);
-                      }
-                    }}
-                    disabled={!selectedDict}
-                  >
-                    Copiar ID
-                  </button>
-
-                  <button className={styles.ghostBtn} type="button" onClick={clearSignature} disabled={!selectedDict}>
-                    Eliminar firma
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.signatureBox}>
-                <div className={styles.signatureTitleRow}>
-                  <span className={styles.signatureMiniIcon}>↑</span>
-                  <div className={styles.signatureTitle}>Subir imagen de firma</div>
-                </div>
-
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png,image/jpeg"
-                  style={{ display: "none" }}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] ?? null;
-                    onUploadSignatureImage(file);
-                    e.currentTarget.value = "";
-                  }}
-                />
-
-                <button
-                  className={styles.primaryBtn}
-                  type="button"
-                  onClick={openFilePicker}
-                  disabled={!selectedDictId || savingSignature}
-                >
-                  <span className={styles.btnIcon}>↑</span>
-                  {savingSignature ? "Subiendo..." : "Seleccionar archivo"}
-                </button>
-
-                <div className={styles.signatureHint}>
-                  {selectedDictId ? "Recomendado: PNG con fondo transparente." : "Primero selecciona un dictaminador."}
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.canvasWrap}>
-              <div className={styles.signatureTitleRow}>
-                <span className={styles.signatureMiniIcon}>✎</span>
-                <div className={styles.signatureTitle}>Dibujar firma</div>
-              </div>
-
-              <canvas
-                ref={canvasRef}
-                width={520}
-                height={160}
-                className={styles.canvas}
-                onMouseDown={(e) => {
-                  const p = getPos(e);
-                  startDraw(p.x, p.y);
-                }}
-                onMouseMove={(e) => {
-                  const p = getPos(e);
-                  moveDraw(p.x, p.y);
-                }}
-                onMouseUp={endDraw}
-                onMouseLeave={endDraw}
-                onTouchStart={(e) => {
-                  e.preventDefault();
-                  const p = getPos(e);
-                  startDraw(p.x, p.y);
-                }}
-                onTouchMove={(e) => {
-                  e.preventDefault();
-                  const p = getPos(e);
-                  moveDraw(p.x, p.y);
-                }}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  endDraw();
-                }}
-              />
-
-              <div className={styles.actions}>
-                <button className={styles.linkBtn} type="button" onClick={clearCanvas}>
-                  Limpiar canvas
-                </button>
-                <button
-                  className={styles.primaryBtn}
-                  type="button"
-                  onClick={saveCanvasAsSignature}
-                  disabled={!selectedDictId || savingSignature}
-                >
-                  <span className={styles.btnIcon}>✓</span>
-                  Guardar firma (canvas)
-                </button>
-              </div>
-
-              <div className={styles.note}>Nota: la firma se guarda en backend y se liga al dictaminador.</div>
-            </div>
-          </div>
         </div>
 
         {/* Derecha: Tabla */}
         <div className={styles.tableCard}>
           <div className={styles.tableHeader}>
             <div>
-              <div className={styles.sectionKicker}>REGISTRO EDITORIAL</div>
-              <div className={styles.tableTitle}>
-                {tab === "DICTAMINADORES" ? "Dictaminadores" : "Autores"}
-              </div>
-              <div className={styles.tableSub}>
-                {loadingList ? "Cargando..." : `${filtered.length} registros`}
-              </div>
+              <div className={styles.tableTitle}>{tab === "DICTAMINADORES" ? "Dictaminadores" : "Autores"}</div>
+              <div className={styles.tableSub}>{loadingList ? "Cargando..." : `${filtered.length} registros`}</div>
             </div>
 
-            <span className={styles.badge}>
-              <span className={styles.badgeDot} />
-              Activos
-            </span>
+            <span className={styles.badge}>online</span>
           </div>
 
           <div className={styles.tableWrap}>
@@ -926,18 +713,11 @@ export default function Usuarios() {
 
                     <td className={styles.td}>
                       <div className={styles.actions}>
-                        <button className={styles.linkBtn} type="button" onClick={() => editUser(u)}>
-                          <span className={styles.actionIcon}>✎</span>
-                          Editar
-                        </button>
-
                         <button className={styles.ghostBtn} type="button" onClick={() => toggleActive(u.id)}>
-                          <span className={styles.actionIcon}>◉</span>
                           {u.active ? "Desactivar" : "Activar"}
                         </button>
 
                         <button className={styles.dangerBtn} type="button" onClick={() => deleteUser(u)}>
-                          <span className={styles.actionIconDanger}>×</span>
                           Eliminar
                         </button>
                       </div>
@@ -948,10 +728,7 @@ export default function Usuarios() {
                 {!loadingList && filtered.length === 0 && (
                   <tr>
                     <td className={styles.td} colSpan={showExtraCols ? 8 : 6}>
-                      <div className={styles.emptyTable}>
-                        <strong>No hay registros.</strong>
-                        <span>Los usuarios creados aparecerán en este listado.</span>
-                      </div>
+                      No hay registros.
                     </td>
                   </tr>
                 )}
@@ -962,10 +739,6 @@ export default function Usuarios() {
           <div className={styles.footerHint}>
             <span className={styles.muted}>
               Roles soportados: <b>editorial</b>, <b>dictaminador</b>, <b>autor</b>.
-            </span>
-
-            <span className={styles.adminFootMark}>
-              Editorial · Panel administrativo
             </span>
           </div>
         </div>

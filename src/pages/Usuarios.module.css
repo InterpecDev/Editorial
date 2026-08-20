@@ -1,7 +1,6 @@
 /* ========================================
    Usuarios.module.css
    ADMIN PREMIUM · NAVY / ORO / MARFIL
-   Misma identidad visual de Libros, Capítulos y Dictámenes
    ======================================== */
 
 .wrap{
@@ -24,96 +23,9 @@
 .top{
   display:flex;
   justify-content:space-between;
-  gap:14px;
+  gap:12px;
   align-items:flex-end;
   flex-wrap:wrap;
-}
-
-.topCopy{
-  min-width:0;
-  flex:1;
-}
-
-.adminEyebrow,
-.sectionKicker{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  font-size:10px;
-  font-weight:1000;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  color:#9B721F;
-}
-
-.adminEyebrow{
-  margin-bottom:7px;
-}
-
-.adminEyebrowDot{
-  width:7px;
-  height:7px;
-  border-radius:999px;
-  background:#D4AF37;
-  box-shadow:0 0 0 4px rgba(212,175,55,.13);
-}
-
-.topTitleRow{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.adminBadge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid rgba(184,137,45,.28);
-  background:linear-gradient(135deg,#FFF9EA,#FFFDF8);
-  color:#8A651C;
-  font-size:10px;
-  font-weight:1000;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  box-shadow:0 7px 20px rgba(184,137,45,.08);
-}
-
-.topActions{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-
-.syncStatus{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  color:#667085;
-  font-size:11px;
-  font-weight:800;
-}
-
-.syncDot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#22C55E;
-  box-shadow:0 0 0 3px rgba(34,197,94,.12);
-}
-
-.syncDotLoading{
-  background:#D4AF37;
-  box-shadow:0 0 0 3px rgba(212,175,55,.14);
-}
-
-.refreshIcon{
-  margin-right:5px;
-  color:#B8892D;
-  font-size:15px;
 }
 
 .h2{
@@ -129,7 +41,6 @@
   font-size:13px;
   color:#667085;
   max-width:720px;
-  line-height:1.5;
 }
 
 /* ===== TABS ===== */
@@ -142,7 +53,7 @@
   max-width:100%;
   border:1px solid rgba(11,31,58,.08);
   border-radius:16px;
-  background:rgba(255,255,255,.76);
+  background:rgba(255,255,255,.78);
   box-shadow:0 10px 28px rgba(7,23,43,.05);
 }
 
@@ -155,14 +66,6 @@
   font-weight:1000;
   color:#667085;
   transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,color .18s ease;
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-}
-
-.tabIcon{
-  color:#B8892D;
-  font-size:10px;
 }
 
 .tabBtn:hover:not(:disabled){
@@ -189,21 +92,13 @@
 /* ===== GRID ===== */
 .grid{
   display:grid;
-  grid-template-columns:560px minmax(0,1fr);
+  grid-template-columns:minmax(0,560px) minmax(0,1fr);
   gap:12px;
   align-items:start;
 }
 
-.leftColumn{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  min-width:0;
-}
-
-/* ===== FORM CARDS ===== */
+/* ===== FORM CARD ===== */
 .formCard{
-  position:relative;
   background:
     radial-gradient(900px 320px at 8% 0%,rgba(212,175,55,.14),transparent 58%),
     radial-gradient(900px 320px at 100% 10%,rgba(11,31,58,.10),transparent 56%),
@@ -213,41 +108,11 @@
   padding:14px;
   overflow:hidden;
   backdrop-filter:blur(14px);
-  box-shadow:0 22px 60px rgba(7,23,43,.10),0 1px 0 rgba(255,255,255,.8) inset;
-}
-
-.cardHead{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:12px;
-}
-
-.cardBadge,
-.signatureBadge{
-  padding:5px 8px;
-  border-radius:999px;
-  font-size:9.5px;
-  font-weight:1000;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-  white-space:nowrap;
-}
-
-.cardBadge{
-  color:#8A651C;
-  background:#FFF9EA;
-  border:1px solid rgba(184,137,45,.20);
-}
-
-.signatureBadge{
-  color:#0B1F3A;
-  background:#F4F6F9;
-  border:1px solid rgba(11,31,58,.08);
+  box-shadow:0 22px 60px rgba(7,23,43,.10);
 }
 
 .h3{
-  margin:3px 0 0;
+  margin:0;
   font-size:16px;
   font-weight:1000;
   color:#0B1F3A;
@@ -259,7 +124,6 @@
   font-size:13px;
   color:#667085;
   max-width:720px;
-  line-height:1.5;
 }
 
 /* ===== FORM ===== */
@@ -286,6 +150,7 @@
 .input{
   width:100%;
   min-width:0;
+  box-sizing:border-box;
   padding:10px 12px;
   border-radius:14px;
   border:1px solid rgba(11,31,58,.14);
@@ -309,15 +174,6 @@
 }
 
 /* ===== BUTTONS ===== */
-.primaryBtn,
-.linkBtn,
-.ghostBtn,
-.dangerBtn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-}
-
 .primaryBtn{
   padding:10px 14px;
   border-radius:14px;
@@ -345,12 +201,6 @@
   opacity:.6;
   cursor:not-allowed;
   box-shadow:none;
-}
-
-.btnIcon{
-  margin-right:5px;
-  font-size:15px;
-  line-height:1;
 }
 
 .linkBtn,
@@ -409,19 +259,6 @@
   cursor:not-allowed;
 }
 
-.actionIcon{
-  margin-right:5px;
-  color:#B8892D;
-  font-size:11px;
-}
-
-.actionIconDanger{
-  margin-right:5px;
-  color:#B42318;
-  font-size:15px;
-  line-height:1;
-}
-
 /* ===== NOTE ===== */
 .note{
   margin-top:6px;
@@ -459,7 +296,6 @@
 }
 
 .tableTitle{
-  margin-top:3px;
   font-weight:1000;
   color:#0B1F3A;
 }
@@ -471,9 +307,6 @@
 }
 
 .badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
   font-size:10px;
   padding:5px 9px;
   border-radius:999px;
@@ -483,13 +316,6 @@
   font-weight:1000;
   text-transform:uppercase;
   letter-spacing:.05em;
-}
-
-.badgeDot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#22C55E;
 }
 
 .tableWrap{
@@ -607,109 +433,11 @@
   padding:12px;
   border-top:1px solid rgba(11,31,58,.08);
   background:rgba(255,255,255,.88);
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  flex-wrap:wrap;
 }
 
 .muted{
   color:#667085;
   font-size:12px;
-}
-
-.adminFootMark{
-  color:#9B721F;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.04em;
-}
-
-/* ===== FIRMA ===== */
-.signatureRow{
-  margin-top:12px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.signatureBox{
-  border:1px solid rgba(11,31,58,.10);
-  border-radius:17px;
-  padding:12px;
-  background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(255,253,248,.76));
-  box-shadow:0 10px 28px rgba(7,23,43,.05);
-}
-
-.signatureTitleRow{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  margin-bottom:8px;
-}
-
-.signatureMiniIcon{
-  width:24px;
-  height:24px;
-  display:grid;
-  place-items:center;
-  border-radius:8px;
-  background:#FFF8E7;
-  border:1px solid #E8D39C;
-  color:#9B721F;
-  font-size:11px;
-}
-
-.signatureTitle{
-  font-weight:1000;
-  color:#0B1F3A;
-  font-size:13px;
-}
-
-.signaturePreview{
-  width:100%;
-  height:80px;
-  object-fit:contain;
-  background:#fff;
-  border-radius:14px;
-  border:1px solid rgba(11,31,58,.10);
-}
-
-.signatureEmpty{
-  height:80px;
-  display:grid;
-  place-items:center;
-  border-radius:14px;
-  border:1px dashed rgba(11,31,58,.20);
-  color:#667085;
-  background:rgba(255,255,255,.92);
-  font-size:11px;
-}
-
-.signatureHint{
-  margin-top:8px;
-  font-size:11px;
-  color:#667085;
-  line-height:1.45;
-}
-
-/* ===== CANVAS ===== */
-.canvasWrap{
-  margin-top:12px;
-  border:1px solid rgba(11,31,58,.10);
-  border-radius:18px;
-  padding:12px;
-  background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(255,253,248,.76));
-}
-
-.canvas{
-  width:100%;
-  background:#fff;
-  border-radius:14px;
-  border:1px solid rgba(11,31,58,.10);
-  touch-action:none;
-  cursor:crosshair;
-  box-shadow:inset 0 1px 3px rgba(7,23,43,.03);
 }
 
 /* ===== ERROR ===== */
@@ -723,30 +451,9 @@
   font-weight:900;
 }
 
-.emptyTable{
-  padding:24px 10px;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  text-align:center;
-}
-
-.emptyTable strong{
-  color:#344054;
-}
-
-.emptyTable span{
-  color:#667085;
-  font-size:11px;
-}
-
 /* ===== RESPONSIVE ===== */
 @media (max-width:1200px){
   .grid{
-    grid-template-columns:1fr;
-  }
-
-  .signatureRow{
     grid-template-columns:1fr;
   }
 }
@@ -755,11 +462,6 @@
   .top{
     flex-direction:column;
     align-items:flex-start;
-  }
-
-  .topActions{
-    width:100%;
-    justify-content:space-between;
   }
 
   .tabs{
@@ -789,10 +491,6 @@
     padding:12px;
   }
 
-  .cardHead{
-    flex-direction:column;
-  }
-
   .input{
     padding:8px 10px;
     border-radius:12px;
@@ -805,45 +503,8 @@
     width:100%;
   }
 
-  .topActions{
-    flex-direction:column;
-    align-items:stretch;
-  }
-
-  .syncStatus{
-    justify-content:center;
-  }
-
   .actions{
     flex-direction:column;
-  }
-
-  .signatureBox{
-    padding:10px;
-  }
-
-  .canvas{
-    height:120px;
-  }
-
-  .footerHint{
-    flex-direction:column;
-  }
-}
-
-@media (max-width:420px){
-  .adminBadge{
-    font-size:9px;
-    padding:5px 8px;
-  }
-
-  .tabs{
-    padding:5px;
-  }
-
-  .tabBtn{
-    font-size:11px;
-    padding:8px 10px;
   }
 }
 

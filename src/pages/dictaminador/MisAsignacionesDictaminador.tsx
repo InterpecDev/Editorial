@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState, useCallback, Suspense } from "reac
 import { api } from "../../services/api";
 import styles from "./MisAsignacionesDictaminador.module.css";
 import DictaminacionContent from "./DictaminacionContent";
+import SubirArchivosFirmados from "./SubirArchivosFirmados";
+import DocumentosRecibidos from "./DocumentosRecibidos";
 import { alertService } from "../../utils/alerts";
 
 /* =========================
@@ -34,7 +36,6 @@ type AssignedChapterApi = {
   deadline_at?: string | null;
   deadline_stage?: string | null;
   author_deadline_at?: string | null;
-  // ✅ NUEVO: campos del evaluador
   evaluador_cvu?: string | null;
   evaluador_name?: string | null;
 };
@@ -51,7 +52,6 @@ type AssignedChapterRow = {
   deadline_at?: string | null;
   deadline_stage?: string | null;
   author_deadline_at?: string | null;
-  // ✅ NUEVO: campos del evaluador
   evaluador_cvu?: string | null;
   evaluador_name?: string | null;
 };
@@ -76,7 +76,7 @@ type Privacy = {
   show_email: boolean;
 };
 
-type NavKey = "asignaciones" | "cuenta" | "dictaminacion";
+type NavKey = "asignaciones" | "cuenta" | "dictaminacion" | "subirArchivos" | "documentosRecibidos";
 
 /* =========================
    Error Boundary
@@ -322,7 +322,8 @@ function Icon({
     | "privacy"
     | "search"
     | "eye"
-    | "file";
+    | "file"
+    | "folder";
   tone?: "muted" | "light";
 }) {
   const color = tone === "light" ? "rgba(255,255,255,0.92)" : "rgba(71,85,105,0.95)";
@@ -441,6 +442,12 @@ function Icon({
           <path d="M14 2v5h5" />
         </svg>
       );
+    case "folder":
+      return (
+        <svg viewBox="0 0 24 24" style={common} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+        </svg>
+      );
   }
 }
 
@@ -516,14 +523,22 @@ const ChapterItem = React.memo(
 
         <div className={styles.itemMeta} style={{ marginBottom: 16 }}>
           <span className={styles.metaDot} />
-          <span>
-            {chapter.author_name
-              ? `${chapter.author_name}${chapter.author_email ? ` (${chapter.author_email})` : ""}`
-              : "Autor: —"}
-          </span>
-
           <span className={styles.metaSep}>•</span>
           <span>Actualizado {fmtDate(chapter.updated_at)}</span>
+
+          {/* ✅ CORREO DEL AUTOR VISIBLE */}
+          {chapter.author_name && (
+            <>
+              <span className={styles.metaSep}>•</span>
+              <span>Autor: <b>{chapter.author_name}</b></span>
+            </>
+          )}
+          {chapter.author_email && (
+            <>
+              <span className={styles.metaSep}>•</span>
+              <span style={{ color: "#2d9cdb" }}>📧 {chapter.author_email}</span>
+            </>
+          )}
 
           {chapter.deadline_at ? (
             <>
@@ -690,8 +705,7 @@ function MisAsignacionesDictaminadorContent() {
   const loadMe = useCallback(async () => {
     try {
       const { data } = await api.get<Me>("/account/me", { headers: authHeaders() });
-      // Depuración: ver qué datos llegan del usuario
-    console.log("👤 Datos del usuario /account/me:", data);
+      console.log("👤 Datos del usuario /account/me:", data);
       setMe(data);
     } catch (err: any) {
       if (handleAuthMaybe(err)) return;
@@ -738,7 +752,6 @@ function MisAsignacionesDictaminadorContent() {
         deadline_at: c.deadline_at ?? null,
         deadline_stage: c.deadline_stage ?? null,
         author_deadline_at: c.author_deadline_at ?? null,
-        // ✅ NUEVO: mapear campos del evaluador
         evaluador_cvu: (c as any).evaluador_cvu ?? null,
         evaluador_name: (c as any).evaluador_name ?? null,
       }));
@@ -1041,12 +1054,26 @@ function MisAsignacionesDictaminadorContent() {
     );
   }
 
-  const pageTitle = nav === "asignaciones" ? "Asignaciones" : nav === "cuenta" ? "Mi Cuenta" : "Dictaminación";
+  const pageTitle = 
+    nav === "asignaciones" 
+      ? "Asignaciones" 
+      : nav === "cuenta" 
+      ? "Mi Cuenta" 
+      : nav === "subirArchivos"
+      ? "Subir Archivos Firmados"
+      : nav === "documentosRecibidos"
+      ? "Documentos Recibidos"
+      : "Dictaminación";
+      
   const pageSub =
     nav === "asignaciones"
       ? "Revisa capítulos, descarga archivos y registra dictámenes con trazabilidad."
       : nav === "cuenta"
       ? "Administra tu perfil, seguridad y preferencias del sistema."
+      : nav === "subirArchivos"
+      ? "Sube los archivos firmados digitalmente para que el administrador los revise."
+      : nav === "documentosRecibidos"
+      ? "Visualiza y descarga los documentos enviados por la editorial."
       : "Genera y administra los dictámenes de los capítulos evaluados.";
 
   return (
@@ -1097,6 +1124,30 @@ function MisAsignacionesDictaminadorContent() {
 
           <button
             type="button"
+            onClick={() => setNav("subirArchivos")}
+            className={`${styles.navBtn} ${nav === "subirArchivos" ? styles.navBtnActive : ""}`}
+          >
+            <span className={styles.navIcon}>
+              <Icon name="folder" tone="light" />
+            </span>
+            <span>Subir Archivos</span>
+            {nav === "subirArchivos" ? <span className={styles.navGlow} /> : null}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setNav("documentosRecibidos")}
+            className={`${styles.navBtn} ${nav === "documentosRecibidos" ? styles.navBtnActive : ""}`}
+          >
+            <span className={styles.navIcon}>
+              <Icon name="download" tone="light" />
+            </span>
+            <span>Documentos Recibidos</span>
+            {nav === "documentosRecibidos" ? <span className={styles.navGlow} /> : null}
+          </button>
+
+          <button
+            type="button"
             onClick={() => setNav("cuenta")}
             className={`${styles.navBtn} ${nav === "cuenta" ? styles.navBtnActive : ""}`}
           >
@@ -1136,6 +1187,18 @@ function MisAsignacionesDictaminadorContent() {
               <button type="button" className={styles.btnGhost} onClick={loadAssignments} disabled={loading}>
                 <span style={{ display: "inline-flex", gap: 10, alignItems: "center" }}>
                   <Icon name="refresh" /> Actualizar capítulos
+                </span>
+              </button>
+            ) : nav === "subirArchivos" ? (
+              <button type="button" className={styles.btnGhost} onClick={() => window.location.reload()} disabled={loading}>
+                <span style={{ display: "inline-flex", gap: 10, alignItems: "center" }}>
+                  <Icon name="refresh" /> Actualizar lista
+                </span>
+              </button>
+            ) : nav === "documentosRecibidos" ? (
+              <button type="button" className={styles.btnGhost} onClick={() => window.location.reload()} disabled={loading}>
+                <span style={{ display: "inline-flex", gap: 10, alignItems: "center" }}>
+                  <Icon name="refresh" /> Actualizar documentos
                 </span>
               </button>
             ) : (
@@ -1204,8 +1267,19 @@ function MisAsignacionesDictaminadorContent() {
                   onChange={(e) => {
                     const chapterId = Number(e.target.value);
                     const chapter = rows.find(r => r.id === chapterId) || null;
+                    
+                    // Primero oculta el formulario
+                    setShowDictamenForm(false);
+                    
+                    // Luego actualiza el capítulo seleccionado
                     setSelectedChapter(chapter);
-                    setShowDictamenForm(!!chapter);
+                    
+                    // Después de un pequeño delay, muestra el formulario nuevamente
+                    if (chapter) {
+                      setTimeout(() => {
+                        setShowDictamenForm(true);
+                      }, 50);
+                    }
                   }}
                 >
                   <option value="">-- Selecciona un capítulo --</option>
@@ -1217,16 +1291,17 @@ function MisAsignacionesDictaminadorContent() {
                 </select>
               </div>
 
-              {/* Formulario de dictamen solo si hay capítulo seleccionado */}
+              {/* Formulario de dictamen con KEY para forzar remontaje */}
               {showDictamenForm && selectedChapter ? (
                 <DictaminacionContent 
+                  key={selectedChapter.id}
                   chapterId={selectedChapter.id}
                   chapterTitle={selectedChapter.title}
                   evaluadorName={me?.name || ""}
                   evaluadorCvu={
-                  selectedChapter.evaluador_cvu ||  // ← Primero del capítulo
-                  me?.cvo_snii ||                   // ← Luego del usuario
-                  ""                                // ← Fallback vacío
+                    selectedChapter.evaluador_cvu ||
+                    me?.cvo_snii ||
+                    ""
                   }
                 />
               ) : (
@@ -1239,6 +1314,12 @@ function MisAsignacionesDictaminadorContent() {
             </div>
           </div>
         )}
+
+        {/* ===== SECCIÓN SUBIR ARCHIVOS FIRMADOS ===== */}
+        {nav === "subirArchivos" && <SubirArchivosFirmados />}
+
+        {/* ===== SECCIÓN DOCUMENTOS RECIBIDOS ===== */}
+        {nav === "documentosRecibidos" && <DocumentosRecibidos />}
 
         {nav === "cuenta" ? (
           <div className={styles.grid2}>
@@ -1312,6 +1393,12 @@ function MisAsignacionesDictaminadorContent() {
                 </button>
                 <button type="button" className={styles.btnGhost} onClick={() => setNav("dictaminacion")}>
                   Ir a Dictaminación
+                </button>
+                <button type="button" className={styles.btnGhost} onClick={() => setNav("subirArchivos")}>
+                  Ir a Subir Archivos
+                </button>
+                <button type="button" className={styles.btnGhost} onClick={() => setNav("documentosRecibidos")}>
+                  Ir a Documentos Recibidos
                 </button>
               </div>
             </section>
@@ -1393,15 +1480,45 @@ function MisAsignacionesDictaminadorContent() {
                 <div className={styles.cardHint}>Flujo sugerido</div>
               </div>
 
-              <div className={styles.note}>
-                1) Abre <b>Ver último</b> para ver el archivo más reciente.
-                <br />
-                2) Descarga con <b>Descargar último</b>.
-                <br />
-                3) Marca <b>En revisión</b> o solicita <b>Correcciones</b>.
-                <br />
-                4) Cuando el autor reenvíe, vuelve a <b>Ver último</b> y decide: <b>Aprobar</b> o <b>Rechazar</b>.
-              </div>
+             <div className={styles.note}>
+  <div>
+    <b>1)</b> Abre <b>Ver último</b> para ver el archivo más reciente.
+  </div>
+
+  <div>
+    <b>2)</b> Descarga con <b>Descargar último</b>.
+  </div>
+
+  <div>
+    <b>3)</b> Marca <b>En revisión</b> o solicita <b>Correcciones</b>.
+  </div>
+
+  <div>
+    <b>4)</b> Cuando el autor reenvíe, vuelve a <b>Ver último</b> y decide:{" "}
+    <b>Aprobar</b> o <b>Rechazar</b>.
+  </div>
+
+  <div>
+    <b>5)</b> Si apruebas, el capítulo pasará al apartado de Dictaminación,{" "}
+    <b>
+      donde seleccionarás el capítulo a dictaminar y posteriormente
+      llenarás los datos correspondientes.
+    </b>{" "}
+    Guarda los datos para seleccionar la plantilla de dictamen y generar
+    el archivo. <b>Descarga el dictamen</b> y procede a firmarlo
+    digitalmente.
+  </div>
+
+  <div>
+    <b>6)</b> Cuando tengas el archivo firmado, ve a{" "}
+    <b>Subir Archivos</b> para subirlo y que la editorial lo revise.
+  </div>
+
+  <div>
+    <b>7)</b> En el apartado de <b>Documentos Recibidos</b> es en donde podrás ver los archivos que la editorial
+    haya subido para ti, como la <b>Constancia de Dictamen</b> y donde a su vez, podrás descargar.
+  </div>
+</div>
 
               <div className={styles.sep} />
 
@@ -1413,168 +1530,195 @@ function MisAsignacionesDictaminadorContent() {
             </section>
           </div>
         )}
+      </main>
 
-        {actionOpen && selected && actionType && (
-          <div className={styles.overlay} onClick={() => setActionOpen(false)}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-              <div className={styles.modalTitle}>
-                {actionType === "REVISION"
-                  ? "Marcar En revisión"
-                  : actionType === "CORRECCIONES"
-                  ? "Solicitar correcciones"
-                  : actionType === "APROBAR"
-                  ? "Aprobar capítulo"
-                  : "Rechazar capítulo"}
-              </div>
+      {/* ===== MODALES FUERA DEL MAIN ===== */}
+      
+      {/* Modal de acción (correcciones, aprobar, rechazar) */}
+      {actionOpen && selected && actionType && (
+        <div className={styles.overlay} onClick={() => setActionOpen(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalTitle}>
+              {actionType === "REVISION"
+                ? "Marcar En revisión"
+                : actionType === "CORRECCIONES"
+                ? "Solicitar correcciones"
+                : actionType === "APROBAR"
+                ? "Aprobar capítulo"
+                : "Rechazar capítulo"}
+            </div>
 
-              <div className={styles.modalHint}>
+            <div className={styles.modalHint}>
+              <div>
                 Capítulo: <b>{selected.title}</b> • Estado actual: <b>{statusLabel(selected.status)}</b>
               </div>
-
-              {(actionType === "CORRECCIONES" || actionType === "RECHAZAR") && (
-                <>
-                  <label className={styles.modalLabel}>
-                    {actionType === "CORRECCIONES" ? "Observaciones / comentario" : "Motivo de rechazo"}
-                  </label>
-                  <textarea
-                    className={styles.modalInput}
-                    style={{ minHeight: 120, resize: "vertical" }}
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder={
-                      actionType === "CORRECCIONES"
-                        ? "• Ajustar formato\n• Revisar coherencia...\n• Corregir referencias..."
-                        : "• No cumple criterios\n• Falta metodología..."
-                    }
-                  />
-
-                  {actionType === "CORRECCIONES" && (
-                    <>
-                      <div style={{ height: 10 }} />
-                      <label className={styles.modalLabel}>Fecha límite para el autor</label>
-                      <input
-                        className={styles.modalInput}
-                        type="date"
-                        value={authorDeadline}
-                        onChange={(e) => setAuthorDeadline(e.target.value)}
-                      />
-                    </>
+              {/* ✅ CORREO DEL AUTOR EN EL MODAL */}
+              {(selected.author_name || selected.author_email) && (
+                <div style={{ marginTop: 8, fontSize: 13, color: "#1e293b" }}>
+                  {selected.author_name && (
+                    <span>
+                      Autor: <b>{selected.author_name}</b>
+                    </span>
                   )}
-                </>
+                  {selected.author_email && (
+                    <span style={{ marginLeft: 12 }}>
+                      📧 <b style={{ color: "#2d9cdb" }}>{selected.author_email}</b>
+                    </span>
+                  )}
+                </div>
               )}
+              {actionType === "CORRECCIONES" && (
+                <div style={{ marginTop: 8, fontSize: 13, color: "#92400e", background: "#fef3c7", padding: "8px 12px", borderRadius: 8 }}>
+                  ⚠️ Las correcciones se enviarán al autor por correo electrónico.
+                </div>
+              )}
+            </div>
 
-              <div className={styles.modalActions}>
-                <button className={styles.btnGhost} type="button" onClick={() => setActionOpen(false)}>
-                  Cancelar
-                </button>
-                <button className={styles.btnPrimary} type="button" onClick={runAction} disabled={loading}>
-                  {loading ? "Procesando..." : "Confirmar"}
-                </button>
-              </div>
+            {(actionType === "CORRECCIONES" || actionType === "RECHAZAR") && (
+              <>
+                <label className={styles.modalLabel}>
+                  {actionType === "CORRECCIONES" ? "Observaciones / comentario" : "Motivo de rechazo"}
+                </label>
+                <textarea
+                  className={styles.modalInput}
+                  style={{ minHeight: 120, resize: "vertical" }}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder={
+                    actionType === "CORRECCIONES"
+                      ? "• Ajustar formato\n• Revisar coherencia...\n• Corregir referencias..."
+                      : "• No cumple criterios\n• Falta metodología..."
+                  }
+                />
+
+                {actionType === "CORRECCIONES" && (
+                  <>
+                    <div style={{ height: 10 }} />
+                    <label className={styles.modalLabel}>Fecha límite para el autor</label>
+                    <input
+                      className={styles.modalInput}
+                      type="date"
+                      value={authorDeadline}
+                      onChange={(e) => setAuthorDeadline(e.target.value)}
+                    />
+                  </>
+                )}
+              </>
+            )}
+
+            <div className={styles.modalActions}>
+              <button className={styles.btnGhost} type="button" onClick={() => setActionOpen(false)}>
+                Cancelar
+              </button>
+              <button className={styles.btnPrimary} type="button" onClick={runAction} disabled={loading}>
+                {loading ? "Procesando..." : "Confirmar"}
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {openPrefs && (
-          <div className={styles.overlay} onClick={() => setOpenPrefs(false)}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-              <div className={styles.modalTitle}>Notificaciones por correo</div>
-              <div className={styles.modalHint}>
-                Se enviarán al correo: <b>{me?.email || "—"}</b>
-              </div>
+      {/* Modal de preferencias */}
+      {openPrefs && (
+        <div className={styles.overlay} onClick={() => setOpenPrefs(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalTitle}>Notificaciones por correo</div>
+            <div className={styles.modalHint}>
+              Se enviarán al correo: <b>{me?.email || "—"}</b>
+            </div>
 
-              <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
-                  checked={prefs.email_notify_enabled}
-                  onChange={(e) => setPrefs((s) => ({ ...s, email_notify_enabled: e.target.checked }))}
-                />
-                <span>
-                  <b>Activar notificaciones</b>
-                  <div className={styles.checkSub}>Recibir avisos oficiales del proceso editorial.</div>
-                </span>
-              </label>
+            <label className={styles.checkRow}>
+              <input
+                type="checkbox"
+                checked={prefs.email_notify_enabled}
+                onChange={(e) => setPrefs((s) => ({ ...s, email_notify_enabled: e.target.checked }))}
+              />
+              <span>
+                <b>Activar notificaciones</b>
+                <div className={styles.checkSub}>Recibir avisos oficiales del proceso editorial.</div>
+              </span>
+            </label>
 
-              <div style={{ height: 10 }} />
+            <div style={{ height: 10 }} />
 
-              <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
-                  checked={prefs.notify_status_changes}
-                  disabled={!prefs.email_notify_enabled}
-                  onChange={(e) => setPrefs((s) => ({ ...s, notify_status_changes: e.target.checked }))}
-                />
-                <span>Cuando cambie el estado del capítulo</span>
-              </label>
+            <label className={styles.checkRow}>
+              <input
+                type="checkbox"
+                checked={prefs.notify_status_changes}
+                disabled={!prefs.email_notify_enabled}
+                onChange={(e) => setPrefs((s) => ({ ...s, notify_status_changes: e.target.checked }))}
+              />
+              <span>Cuando cambie el estado del capítulo</span>
+            </label>
 
-              <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
-                  checked={prefs.notify_corrections}
-                  disabled={!prefs.email_notify_enabled}
-                  onChange={(e) => setPrefs((s) => ({ ...s, notify_corrections: e.target.checked }))}
-                />
-                <span>Cuando solicite correcciones</span>
-              </label>
+            <label className={styles.checkRow}>
+              <input
+                type="checkbox"
+                checked={prefs.notify_corrections}
+                disabled={!prefs.email_notify_enabled}
+                onChange={(e) => setPrefs((s) => ({ ...s, notify_corrections: e.target.checked }))}
+              />
+              <span>Cuando solicite correcciones</span>
+            </label>
 
-              <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
-                  checked={prefs.notify_approved_rejected}
-                  disabled={!prefs.email_notify_enabled}
-                  onChange={(e) => setPrefs((s) => ({ ...s, notify_approved_rejected: e.target.checked }))}
-                />
-                <span>Cuando apruebe o rechace</span>
-              </label>
+            <label className={styles.checkRow}>
+              <input
+                type="checkbox"
+                checked={prefs.notify_approved_rejected}
+                disabled={!prefs.email_notify_enabled}
+                onChange={(e) => setPrefs((s) => ({ ...s, notify_approved_rejected: e.target.checked }))}
+              />
+              <span>Cuando apruebe o rechace</span>
+            </label>
 
-              <div className={styles.modalActions}>
-                <button className={styles.btnGhost} type="button" onClick={() => setOpenPrefs(false)}>
-                  Cancelar
-                </button>
-                <button className={styles.btnPrimary} type="button" onClick={savePrefs} disabled={loading}>
-                  {loading ? "Guardando..." : "Guardar"}
-                </button>
-              </div>
+            <div className={styles.modalActions}>
+              <button className={styles.btnGhost} type="button" onClick={() => setOpenPrefs(false)}>
+                Cancelar
+              </button>
+              <button className={styles.btnPrimary} type="button" onClick={savePrefs} disabled={loading}>
+                {loading ? "Guardando..." : "Guardar"}
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {openPrivacy && (
-          <div className={styles.overlay} onClick={() => setOpenPrivacy(false)}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-              <div className={styles.modalTitle}>Privacidad</div>
-              <div className={styles.modalHint}>Controla lo que se muestra en tu perfil dentro del sistema.</div>
+      {/* Modal de privacidad */}
+      {openPrivacy && (
+        <div className={styles.overlay} onClick={() => setOpenPrivacy(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalTitle}>Privacidad</div>
+            <div className={styles.modalHint}>Controla lo que se muestra en tu perfil dentro del sistema.</div>
 
-              <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
-                  checked={privacy.show_name}
-                  onChange={(e) => setPrivacy((s) => ({ ...s, show_name: e.target.checked }))}
-                />
-                <span>Mostrar mi nombre</span>
-              </label>
+            <label className={styles.checkRow}>
+              <input
+                type="checkbox"
+                checked={privacy.show_name}
+                onChange={(e) => setPrivacy((s) => ({ ...s, show_name: e.target.checked }))}
+              />
+              <span>Mostrar mi nombre</span>
+            </label>
 
-              <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
-                  checked={privacy.show_email}
-                  onChange={(e) => setPrivacy((s) => ({ ...s, show_email: e.target.checked }))}
-                />
-                <span>Mostrar mi correo</span>
-              </label>
+            <label className={styles.checkRow}>
+              <input
+                type="checkbox"
+                checked={privacy.show_email}
+                onChange={(e) => setPrivacy((s) => ({ ...s, show_email: e.target.checked }))}
+              />
+              <span>Mostrar mi correo</span>
+            </label>
 
-              <div className={styles.modalActions}>
-                <button className={styles.btnGhost} type="button" onClick={() => setOpenPrivacy(false)}>
-                  Cancelar
-                </button>
-                <button className={styles.btnPrimary} type="button" onClick={savePrivacy} disabled={loading}>
-                  {loading ? "Guardando..." : "Guardar"}
-                </button>
-              </div>
+            <div className={styles.modalActions}>
+              <button className={styles.btnGhost} type="button" onClick={() => setOpenPrivacy(false)}>
+                Cancelar
+              </button>
+              <button className={styles.btnPrimary} type="button" onClick={savePrivacy} disabled={loading}>
+                {loading ? "Guardando..." : "Guardar"}
+              </button>
             </div>
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 }

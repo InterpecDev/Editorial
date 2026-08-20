@@ -2,6 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../services/api";
 import styles from "./CapituloDetalle.module.css";
+// ✅ IMPORTAR el componente de dictaminación
+import DictaminacionContent from "./dictaminador/DictaminacionContent";
+
 
 type Status =
   | "RECIBIDO"
@@ -65,7 +68,6 @@ type Chapter = {
   versions: VersionFile[];
   history: HistoryItem[];
 
-  // si tu backend manda evaluación guardada, la usamos para precarga
   evaluacionActual?: {
     tipo?: string;
     criterios?: CriterioEvaluacion[];
@@ -85,7 +87,6 @@ const endpoints = {
     `/admin/chapters/${chapterId}/versions/${versionId}/download`,
   uploadVersion: (chapterId: string) => `/admin/chapters/${chapterId}/versions/upload`,
   history: (chapterId: string) => `/admin/chapters/${chapterId}/history`,
-  // ✅ evaluación
   upsertEvaluacion: (chapterId: string) => `/admin/chapters/${chapterId}/evaluacion/upsert`,
 };
 
@@ -93,6 +94,7 @@ function ensureString(v: any): string {
   if (v === null || v === undefined) return "";
   return String(v);
 }
+
 function toStatus(v: any): Status {
   return v as Status;
 }
@@ -145,7 +147,6 @@ function mapChapterResponseToChapter(payload: any): Chapter {
   };
 }
 
-// ✅ FUNCIONES PARA CLASES CSS
 function getPillClass(status: Status): string {
   const baseClass = styles.pill;
 
@@ -175,6 +176,10 @@ export default function CapituloDetalle() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const lastLoadRef = useRef(0);
+  
+  // ✅ Estado para saber si el dictamen existe
+  const [hasDictamen, setHasDictamen] = useState(false);
+  const [dictamenData, setDictamenData] = useState<any>(null);
 
   const [chapter, setChapter] = useState<Chapter>(() => ({
     id: chapterId || "unknown",
@@ -198,8 +203,8 @@ export default function CapituloDetalle() {
   // Estados (solo nombre y correo) — (UI)
   const [evaluatorName, setEvaluatorName] = useState<string>("");
   const [evaluatorEmail, setEvaluatorEmail] = useState<string>("");
-
-  // ✅ EVALUACIÓN
+  
+  // ✅ EVALUACIÓN (ya no se usa porque usamos DictaminacionContent, pero lo mantengo por si acaso)
   const [evalTipo, setEvalTipo] = useState<string>("");
   const [evalCriterios, setEvalCriterios] = useState<CriterioEvaluacion[]>(
     CRITERIOS_PREDEFINIDOS.map((c) => ({ ...c, puntaje: 3 }))
@@ -215,8 +220,30 @@ export default function CapituloDetalle() {
   }, [evalCriterios]);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
   const chapterSeed = useMemo(() => chapter, [chapter]);
+
+  // ✅ FUNCIÓN para verificar si existe dictamen (AHORA está en el nivel correcto)
+  const checkDictamenExists = async () => {
+    if (!chapterId) return;
+    
+    try {
+      const response = await api.get(`/dictaminador/dictamen/${chapterId}`);
+      if (response.data && response.data.id) {
+        setHasDictamen(true);
+        setDictamenData(response.data);
+      } else {
+        setHasDictamen(false);
+        setDictamenData(null);
+      }
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        setHasDictamen(false);
+        setDictamenData(null);
+      } else {
+        console.error("Error checking dictamen:", error);
+      }
+    }
+  };
 
   const applyChapterToUI = (c: Chapter) => {
     setChapter(c);
@@ -267,9 +294,10 @@ export default function CapituloDetalle() {
     }
   };
 
+  // ✅ useEffect para cargar datos al montar (AHORA está en el nivel correcto)
   useEffect(() => {
     reloadAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    checkDictamenExists();
   }, [chapterId]);
 
   const pushHistory = (by: string, action: string, detail: string) => {
@@ -296,7 +324,7 @@ export default function CapituloDetalle() {
     }
   };
 
-  // ✅ GUARDAR EVALUACIÓN
+  // ✅ GUARDAR EVALUACIÓN (ya no se usa, pero lo mantengo)
   const guardarEvaluacion = async () => {
     if (!chapterId) return;
 
@@ -442,15 +470,7 @@ export default function CapituloDetalle() {
           </button>
 
           <div className={styles.titleBlock}>
-            <div className={styles.adminEyebrow}>
-              <span className={styles.adminEyebrowDot} />
-              DETALLE EDITORIAL
-            </div>
-
-            <div className={styles.titleRow}>
-              <h2 className={styles.h2}>{chapterSeed.title}</h2>
-              <span className={styles.adminBadge}>Administrador</span>
-            </div>
+            <h2 className={styles.h2}>{chapterSeed.title}</h2>
             <div className={styles.metaRow}>
               <span className={styles.metaItem}>
                 <b>Libro:</b> {chapterSeed.book}
@@ -474,12 +494,12 @@ export default function CapituloDetalle() {
 
         <div className={styles.topRight}>
           <div className={styles.folioBox}>
-            <div className={styles.folioLabel}>FOLIO DEL CAPÍTULO</div>
+            <div className={styles.folioLabel}>Folio Capítulo</div>
             <div className={styles.folioValue}>{chapterSeed.folio}</div>
           </div>
 
           <div className={styles.statusBox}>
-            <div className={styles.statusLabel}>ESTADO EDITORIAL</div>
+            <div className={styles.statusLabel}>Estado</div>
             <span className={getPillClass(chapter.status)}>{statusLabel(chapter.status)}</span>
           </div>
         </div>
@@ -496,7 +516,7 @@ export default function CapituloDetalle() {
               type="button"
               disabled={saving}
             >
-              <span className={styles.tabIcon}>▤</span> Versiones
+              📄 Versiones
             </button>
 
             <button
@@ -505,7 +525,7 @@ export default function CapituloDetalle() {
               type="button"
               disabled={saving}
             >
-              <span className={styles.tabIcon}>✎</span> Evaluación
+              ✍️ Evaluación
             </button>
 
             <button
@@ -514,7 +534,7 @@ export default function CapituloDetalle() {
               type="button"
               disabled={saving}
             >
-              <span className={styles.tabIcon}>◷</span> Historial
+              📜 Historial
             </button>
           </div>
 
@@ -524,20 +544,11 @@ export default function CapituloDetalle() {
               <div className={styles.section}>
                 <div className={styles.sectionTop}>
                   <div>
-                    <div className={styles.sectionKicker}>ARCHIVOS Y VERSIONES</div>
                     <h3 className={styles.h3}>Versiones del capítulo</h3>
                     <p className={styles.p}>Archivos subidos por autor, dictaminador o editorial.</p>
                   </div>
 
-                  <button
-                    className={styles.secondaryBtn}
-                    onClick={() => fileInputRef.current?.click()}
-                    type="button"
-                    disabled={saving}
-                  >
-                    <span className={styles.btnIconDark}>＋</span>
-                    Subir nueva versión
-                  </button>
+                  
 
                   <input
                     ref={fileInputRef}
@@ -599,7 +610,6 @@ export default function CapituloDetalle() {
                               type="button"
                               disabled={saving}
                             >
-                              <span className={styles.btnIconDark}>↓</span>
                               Descargar
                             </button>
                           </td>
@@ -608,10 +618,7 @@ export default function CapituloDetalle() {
                       {chapter.versions.length === 0 && (
                         <tr>
                           <td className={styles.td} colSpan={6}>
-                            <div className={styles.emptyTable}>
-                              <strong>No hay versiones aún.</strong>
-                              <span>Cuando se suba un archivo aparecerá en este historial.</span>
-                            </div>
+                            No hay versiones aún.
                           </td>
                         </tr>
                       )}
@@ -621,143 +628,37 @@ export default function CapituloDetalle() {
               </div>
             )}
 
-            {/* TAB: EVALUACIÓN */}
+            {/* ✅ TAB: EVALUACIÓN - CORREGIDO */}
             {tab === "EVALUACION" && (
               <div className={styles.section}>
                 <div className={styles.sectionTop}>
                   <div>
-                    <div className={styles.sectionKicker}>EVALUACIÓN EDITORIAL</div>
-                    <h3 className={styles.h3}>Evaluación</h3>
+                    <h3 className={styles.h3}>Dictamen del Capítulo</h3>
                     <p className={styles.p}>
-                      Captura criterios (1–5), decisión y observaciones. El promedio se calcula automáticamente.
+                      {hasDictamen 
+                        ? "📋 El dictaminador ya ha creado un dictamen. Puedes revisarlo y editarlo si es necesario." 
+                        : "⚠️ El dictaminador aún no ha creado un dictamen para este capítulo."}
                     </p>
                   </div>
 
-                  <button className={styles.primaryBtn} onClick={guardarEvaluacion} type="button" disabled={saving}>
-                    <span className={styles.btnIcon}>✓</span>
-                    {saving ? "Guardando..." : "Guardar evaluación"}
-                  </button>
-                </div>
-
-                <div className={styles.evaluacionGrid}>
-                  <div className={styles.evaluacionSection}>
-                    <h4 className={styles.h4}>Información de la evaluación</h4>
-
-                    <div className={styles.formRow}>
-                      <div className={styles.formField}>
-                        <label className={styles.label}>Tipo</label>
-                        <input
-                          className={styles.input}
-                          value={evalTipo}
-                          onChange={(e) => setEvalTipo(e.target.value)}
-                          placeholder='Ej: "Investigación", "Docencia", "Revisión técnica"...'
-                          disabled={saving}
-                          maxLength={80}
-                        />
-                        <div className={styles.mutedSmall}>Texto libre (máx. 80 caracteres).</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.evaluacionSection}>
-                    <h4 className={styles.h4}>Criterios de evaluación (1-5)</h4>
-
-                    {evalCriterios.map((c, idx) => (
-                      <div key={c.id} className={styles.criterioRow}>
-                        <div className={styles.criterioNombre}>{c.nombre}</div>
-
-                        <div className={styles.criterioOpciones}>
-                          {[1, 2, 3, 4, 5].map((p) => (
-                            <label key={p} className={styles.criterioOption}>
-                              <input
-                                type="radio"
-                                name={`eval-criterio-${c.id}`}
-                                value={p}
-                                checked={c.puntaje === p}
-                                onChange={() => {
-                                  const nuevos = [...evalCriterios];
-                                  nuevos[idx].puntaje = p as any;
-                                  setEvalCriterios(nuevos);
-                                }}
-                                disabled={saving}
-                              />
-                              <span>{p}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-
-                    <div className={styles.promedioBox}>
-                      <b>Promedio:</b> {promedioEvaluacion}
-                    </div>
-                  </div>
-
-                  <div className={styles.evaluacionSection}>
-                    <h4 className={styles.h4}>Decisión</h4>
-
-                    <div className={styles.decisionRow}>
-                      <label className={styles.radioLabel}>
-                        <input
-                          type="radio"
-                          name="eval-decision"
-                          value="APROBADO"
-                          checked={evalDecision === "APROBADO"}
-                          onChange={() => setEvalDecision("APROBADO")}
-                          disabled={saving}
-                        />
-                        <span className={`${styles.decisionTag} ${getDecisionPillClass("APROBADO")}`}>Aprobado</span>
-                      </label>
-
-                      <label className={styles.radioLabel}>
-                        <input
-                          type="radio"
-                          name="eval-decision"
-                          value="CORRECCIONES"
-                          checked={evalDecision === "CORRECCIONES"}
-                          onChange={() => setEvalDecision("CORRECCIONES")}
-                          disabled={saving}
-                        />
-                        <span className={`${styles.decisionTag} ${getDecisionPillClass("CORRECCIONES")}`}>Correcciones</span>
-                      </label>
-
-                      <label className={styles.radioLabel}>
-                        <input
-                          type="radio"
-                          name="eval-decision"
-                          value="RECHAZADO"
-                          checked={evalDecision === "RECHAZADO"}
-                          onChange={() => setEvalDecision("RECHAZADO")}
-                          disabled={saving}
-                        />
-                        <span className={`${styles.decisionTag} ${getDecisionPillClass("RECHAZADO")}`}>Rechazado</span>
-                      </label>
-                    </div>
-
-                    <div className={styles.formField}>
-                      <label className={styles.label}>Comentarios / Observaciones</label>
-                      <textarea
-                        className={styles.textarea}
-                        value={evalComentarios}
-                        onChange={(e) => setEvalComentarios(e.target.value)}
-                        placeholder="Escribe aquí tus comentarios sobre el capítulo..."
-                        rows={5}
-                        disabled={saving}
-                      />
-                    </div>
-
-                    <div className={styles.formField}>
-                      <label className={styles.label}>Conflictos de interés</label>
-                      <input
-                        className={styles.input}
-                        value={evalConflictosInteres}
-                        onChange={(e) => setEvalConflictosInteres(e.target.value)}
-                        placeholder="NO o SÍ: explicación"
-                        disabled={saving}
-                      />
-                    </div>
+                  {/* Badge de estado */}
+                  <div className={styles.dictamenStatus}>
+                    {hasDictamen ? (
+                      <span className={styles.statusExists}>✅ Dictamen existente</span>
+                    ) : (
+                      <span className={styles.statusMissing}>❌ Sin dictamen</span>
+                    )}
                   </div>
                 </div>
+
+                {/* ✅ RENDERIZAR EL COMPONENTE DE DICTAMINACIÓN CON isAdmin={true} */}
+                <DictaminacionContent 
+                  chapterId={chapterId ? parseInt(chapterId) : undefined}
+                  chapterTitle={chapter?.title || ""}
+                  evaluadorName={chapter?.evaluatorName || ""}
+                  evaluadorCvu={dictamenData?.evaluador_cvu || ""}
+                  isAdmin={true}  // ✅ IMPORTANTE: Indica que es administrador
+                />
               </div>
             )}
 
@@ -766,7 +667,6 @@ export default function CapituloDetalle() {
               <div className={styles.section}>
                 <div className={styles.sectionTop}>
                   <div>
-                    <div className={styles.sectionKicker}>TRAZABILIDAD</div>
                     <h3 className={styles.h3}>Historial de actividades</h3>
                     <p className={styles.p}>Todos los eventos del proceso.</p>
                   </div>
@@ -795,13 +695,12 @@ export default function CapituloDetalle() {
 
         {/* DERECHA: Acciones rápidas */}
         <div className={styles.rightCard}>
-          <div className={styles.sectionKicker}>CONTROL ADMINISTRATIVO</div>
           <h3 className={styles.h3}>Acciones rápidas</h3>
           <p className={styles.p}>Flujo editorial simplificado</p>
 
           {/* Inputs (solo UI, no asigna en backend aquí) */}
           <div className={styles.actionBox}>
-            <div className={styles.actionTitle}><span className={styles.actionIcon}>◆</span> Dictaminador</div>
+            <div className={styles.actionTitle}>👤 Dictaminador</div>
             <input
               className={styles.input}
               value={evaluatorName}
@@ -823,7 +722,7 @@ export default function CapituloDetalle() {
 
           {/* Decisión final */}
           <div className={styles.actionBox}>
-            <div className={styles.actionTitle}><span className={styles.actionIcon}>✓</span> Decisión final</div>
+            <div className={styles.actionTitle}>✅ Decisión final</div>
             <div className={styles.actionRow}>
               <button
                 className={styles.approveBtn}
@@ -831,7 +730,6 @@ export default function CapituloDetalle() {
                 type="button"
                 disabled={saving || loading}
               >
-                <span className={styles.btnIcon}>✓</span>
                 Aprobar
               </button>
               <button
@@ -840,7 +738,6 @@ export default function CapituloDetalle() {
                 type="button"
                 disabled={saving || loading}
               >
-                <span className={styles.btnIcon}>×</span>
                 Rechazar
               </button>
             </div>
@@ -848,7 +745,7 @@ export default function CapituloDetalle() {
 
           {/* Cambiar estado manual */}
           <div className={styles.actionBox}>
-            <div className={styles.actionTitle}><span className={styles.actionIcon}>↻</span> Cambiar estado</div>
+            <div className={styles.actionTitle}>🔄 Cambiar estado</div>
             <select
               className={styles.input}
               value={chapter.status}
@@ -865,10 +762,6 @@ export default function CapituloDetalle() {
 
           {(saving || loading) && <div className={styles.mutedSmall}>{loading ? "Cargando…" : "Guardando…"}</div>}
         </div>
-      </div>
-
-      <div className={styles.adminFootMark}>
-        Editorial · Panel administrativo
       </div>
     </div>
   );
@@ -925,4 +818,4 @@ function fmtDateTime(iso: string) {
   const hh = String(d.getHours()).padStart(2, "0");
   const mi = String(d.getMinutes()).padStart(2, "0");
   return `${dd}/${mm}/${yy} ${hh}:${mi}`;
-} 
+}

@@ -3,27 +3,6 @@ import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import styles from "./PrivateLayout.module.css";
 import { alertService } from "../utils/alerts";
 
-// Iconos
-import {
-  Library,
-  BookOpen,
-  FileCheck,
-  PenTool,
-  Users,
-  Settings,
-  LogOut,
-  Menu,
-  X,
-  User,
-  Home,
-  FileText,
-  ClipboardList,
-  Plus,
-  Search,
-  Bell,
-  ChevronRight,
-} from "lucide-react";
-
 type Role = "editorial" | "dictaminador" | "autor";
 
 type User = {
@@ -32,10 +11,6 @@ type User = {
   email: string;
   role: Role;
 };
-
-// ============================================
-// FUNCIONES DE AUTENTICACIÓN
-// ============================================
 
 function base64UrlDecode(input: string) {
   const pad = "=".repeat((4 - (input.length % 4)) % 4);
@@ -101,7 +76,9 @@ const routeACL: Array<{ test: (path: string) => boolean; roles: Role[] }> = [
   { test: (p) => p.startsWith("/libros") || p.startsWith("/capitulos"), roles: ["editorial"] },
   { test: (p) => p.startsWith("/dictamenes"), roles: ["editorial"] },
   { test: (p) => p.startsWith("/usuarios"), roles: ["editorial"] },
+  { test: (p) => p.startsWith("/archivos-firmados"), roles: ["editorial"] },
   { test: (p) => p.startsWith("/dictaminador"), roles: ["dictaminador"] },
+  { test: (p) => p.startsWith("/enviar-documentos"), roles: ["editorial"] },
   { test: (p) => p.startsWith("/autor"), roles: ["autor"] },
 ];
 
@@ -112,17 +89,23 @@ function hasAccess(pathname: string, role: Role): boolean {
 }
 
 // ============================================
-// COMPONENTE PRINCIPAL
+// MAPA DE ÍCONOS PARA EL MENÚ
 // ============================================
+const menuIcons: Record<string, string> = {
+  "/libros": "📚",
+  "/capitulos": "📖",
+  "/dictamenes": "📝",
+  "/archivos-firmados": "📁",
+  "/usuarios": "👥",
+  "/dictaminador": "📋",
+  "/autor/mis-envios": "📤",
+};
 
 export default function PrivateLayout() {
   const nav = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // ============================================
-  // EFECTOS
-  // ============================================
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -154,10 +137,6 @@ export default function PrivateLayout() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-
-  // ============================================
-  // VALIDACIÓN DE AUTENTICACIÓN
-  // ============================================
 
   const token = localStorage.getItem("token");
   const userRaw = localStorage.getItem("user");
@@ -194,10 +173,6 @@ export default function PrivateLayout() {
     guard = <Navigate to={defaultHomeByRole[user!.role]} replace />;
   }
 
-  // ============================================
-  // FUNCIONES
-  // ============================================
-
   const logout = async () => {
     alertService.close();
 
@@ -225,44 +200,44 @@ export default function PrivateLayout() {
     nav("/login", { replace: true });
   };
 
-  // ============================================
-  // MENÚ BASADO EN ROL - SIN CONFIGURACIÓN
-  // ============================================
+  const go = (path: string) => {
+    setSidebarOpen(false);
+    nav(path);
+  };
+
+  const isStarts = (prefix: string) => location.pathname.startsWith(prefix);
 
   const menu = useMemo(() => {
     if (!user) return [];
     if (user.role === "editorial") {
       return [
-        { label: "Libros", path: "/libros", icon: BookOpen },
-        { label: "Capítulos", path: "/capitulos", icon: FileCheck },
-        { label: "Dictámenes", path: "/dictamenes", icon: PenTool },
-        { label: "Usuarios", path: "/usuarios", icon: Users },
-        // ❌ ELIMINADO: Configuración
+        { label: "Libros", path: "/libros" },
+        { label: "Capítulos", path: "/capitulos" },
+        { label: "Dictámenes", path: "/dictamenes" },
+        { label: "Archivos ", path: "/archivos-firmados" },
+        { label: "Usuarios", path: "/usuarios" },
+        { label: "Enviar Documentos", path: "/enviar-documentos" }, // ✅ NUEVO
+
       ];
     }
-    if (user.role === "dictaminador") {
-      return [
-        { label: "Mis asignaciones", path: "/dictaminador", icon: ClipboardList },
-        // ❌ ELIMINADO: Configuración
-      ];
-    }
-    return [
-      { label: "Mis envíos", path: "/autor/mis-envios", icon: FileText },
-      // ❌ ELIMINADO: Configuración
-    ];
+    if (user.role === "dictaminador") return [{ label: "Mis asignaciones", path: "/dictaminador" }, 
+    { label: "Documentos recibidos", path: "/dictaminador/documentos" } ];// ✅ NUEVO];
+    return [{ label: "Mis envíos", path: "/autor/mis-envios" }];
   }, [user]);
 
   const avatarLetter = (user?.name?.trim()?.[0] ?? "U").toUpperCase();
 
+  const roleNames: Record<Role, string> = {
+    editorial: "Editorial",
+    dictaminador: "Dictaminador",
+    autor: "Autor",
+  };
+
   if (guard) return guard;
 
-  if (!user) {
-    return <div>Cargando...</div>;
-  }
-
   return (
-    <div className={styles.shell}>
-      {/* Overlay */}
+    <div className={styles.shell} data-open={sidebarOpen ? "1" : "0"}>
+      {/* OVERLAY para móvil */}
       <button
         type="button"
         className={styles.overlay}
@@ -271,15 +246,14 @@ export default function PrivateLayout() {
         onClick={() => setSidebarOpen(false)}
       />
 
-      {/* Sidebar */}
+      {/* ===== SIDEBAR ===== */}
       <aside className={styles.sidebar} data-open={sidebarOpen ? "1" : "0"}>
+        {/* BRAND */}
         <div className={styles.brand}>
-          <div className={styles.brandIcon}>
-            <Library size={24} />
-          </div>
+          <div className={styles.brandIcon}>📘</div>
           <div className={styles.brandText}>
             <div className={styles.brandTitle}>Editorial</div>
-            <div className={styles.brandSubtitle}>Panel</div>
+            <div className={styles.brandSubtitle}>Administración</div>
           </div>
           <button
             type="button"
@@ -287,66 +261,78 @@ export default function PrivateLayout() {
             onClick={() => setSidebarOpen(false)}
             aria-label="Cerrar menú"
           >
-            <X size={18} />
+            ✕
           </button>
         </div>
 
+        {/* DIVIDER */}
+        <div className={styles.divider} />
+
+        {/* NAVEGACIÓN */}
         <nav className={styles.nav}>
+          <div className={styles.navLabel}>Menú Principal</div>
           {menu.map((item) => {
-            const Icon = item.icon;
-            const active = location.pathname.startsWith(item.path);
+            const active = isStarts(item.path);
+            const icon = menuIcons[item.path] || "📄";
             return (
               <button
                 key={item.path}
                 className={`${styles.navItem} ${active ? styles.navItemActive : ""}`}
-                onClick={() => {
-                  setSidebarOpen(false);
-                  nav(item.path);
-                }}
+                onClick={() => go(item.path)}
                 type="button"
               >
-                <Icon className={styles.navIcon} size={20} />
+                <span className={styles.navIcon}>{icon}</span>
                 {item.label}
+                {active && <span className={styles.navBadge}>●</span>}
               </button>
             );
           })}
         </nav>
 
+        {/* FOOTER */}
         <div className={styles.sidebarFooter}>
           <div className={styles.userBox}>
             <div className={styles.userAvatar}>{avatarLetter}</div>
             <div className={styles.userMeta}>
-              <div className={styles.userName}>{user.name}</div>
-              <div className={styles.userRole}>{user.role}</div>
+              <div className={styles.userName}>{user?.name ?? "Usuario"}</div>
+              <div className={styles.userRole}>
+                {user?.role ? roleNames[user.role] : ""}
+              </div>
             </div>
           </div>
 
-          <button className={styles.logoutBtn} onClick={() => logout()} type="button">
-            <LogOut className={styles.btnIcon} size={18} />
-            Salir
+          <button
+            className={styles.logoutBtn}
+            onClick={() => logout()}
+            type="button"
+          >
+            <span className={styles.logoutIcon}>🚪</span>
+            Cerrar sesión
           </button>
         </div>
       </aside>
 
-      {/* Main */}
-      <div className={styles.main}>
-        <header className={styles.header}>
+      {/* ===== MAIN - SIN HEADER ===== */}
+      <main className={styles.main}>
+        {/* Solo el botón hamburguesa en móvil */}
+        <div className={styles.mobileHeader}>
           <button
             type="button"
             className={styles.menuBtn}
             aria-label="Abrir menú"
             onClick={() => setSidebarOpen((v) => !v)}
           >
-            <Menu size={22} />
+            ☰
           </button>
-        </header>
+        </div>
 
+        {/* CONTENIDO - Cada página maneja su propio header */}
         <div className={styles.body}>
           <section className={styles.content}>
             <Outlet />
           </section>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

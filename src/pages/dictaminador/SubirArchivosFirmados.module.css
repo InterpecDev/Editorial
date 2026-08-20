@@ -1,0 +1,393 @@
+/* ========================================
+   SubirArchivosFirmados.module.css
+======================================== */
+
+.container {
+  padding: 20px 24px;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.headerTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.headerSub {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.btnGhost {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 2px solid rgba(0,0,0,0.05);
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnGhost:hover {
+  background: #f8fafc;
+  border-color: #667eea;
+  transform: translateY(-2px);
+}
+
+.alertErr {
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(244,63,94,0.3);
+  background: rgba(244,63,94,0.1);
+  color: #9F1239;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.selectorSection {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #F8FAFC;
+  border-radius: 12px;
+  border: 1px solid #E8EDF4;
+}
+
+.selectorLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.selectorSelect {
+  width: 100%;
+  max-width: 500px;
+  padding: 10px 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0F172A;
+  background: white;
+  cursor: pointer;
+}
+
+.selectorSelect:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+.form {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.05);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.uploadArea {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dropZone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+}
+
+.dropZone:hover {
+  border-color: #667eea;
+  background: #f1f5f9;
+}
+
+.fileInput {
+  display: none;
+}
+
+.dropLabel {
+  cursor: pointer;
+  display: block;
+}
+
+.dropIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+  opacity: 0.6;
+}
+
+.dropTitle {
+  display: block;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.dropSub {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #eef2f6;
+}
+
+.fileName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.fileSize {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.removeBtn {
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+
+.removeBtn:hover {
+  color: #ef4444;
+}
+
+.commentSection {
+  margin-top: 8px;
+}
+
+.commentLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.commentInput {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.commentInput:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+.btnPrimary {
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -4px rgba(102,126,234,0.4);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnSoft {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnSoft:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.btnDanger {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(239,68,68,0.3);
+  background: rgba(239,68,68,0.1);
+  color: #ef4444;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnDanger:hover:not(:disabled) {
+  background: rgba(239,68,68,0.2);
+}
+
+.btnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.subidosSection {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.05);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.toggleSubidos {
+  width: 100%;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1e293b;
+  text-align: left;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggleSubidos:hover {
+  background: #f1f5f9;
+}
+
+.subidosList {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.subidoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #eef2f6;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.subidoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.subidoName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.subidoMeta {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.subidoComment {
+  font-size: 13px;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.subidoActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.emptySubidos {
+  padding: 20px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.emptyState {
+  padding: 60px 20px;
+  text-align: center;
+  color: #64748b;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.05);
+}

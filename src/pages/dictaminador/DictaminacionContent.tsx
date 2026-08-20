@@ -739,13 +739,7 @@ export default function DictaminacionContent({
           >
             Descargar DOCX
           </button>
-          <button
-            className={styles.btnDownload}
-            onClick={() => download("pdf")}
-            disabled={!hasGeneratedDoc || loading}
-          >
-            Descargar PDF
-          </button>
+          
         </div>
 
         {!hasGeneratedDoc && dictamenId && storedTemplateName && (

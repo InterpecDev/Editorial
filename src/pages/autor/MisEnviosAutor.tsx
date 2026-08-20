@@ -25,12 +25,7 @@ type Chapter = {
   status: ChapterStatus;
   updated_at: string;
   file_path?: string | null;
-
-  // ✅ fecha límite que asignó el dictaminador al autor
   author_deadline_at?: string | null;
-
-  // (opcional) si algún día agregas editorial deadline:
-  // editorial_deadline_at?: string | null;
 };
 
 type Book = {
@@ -466,11 +461,55 @@ export default function MisEnviosAutor() {
     } catch {}
   };
 
+  // ✅ FUNCIÓN MODIFICADA: Solo muestra el último dictamen (el más reciente)
   const loadDictamenes = async (chapterId: number) => {
     setLoadingDictamenes(true);
     try {
       const { data } = await api.get<Dictamen[]>(`/autor/chapters/${chapterId}/dictamenes`, { headers: authHeaders() });
-      setDictamenes(Array.isArray(data) ? data : []);
+      
+      let dictamenesData = Array.isArray(data) ? data : [];
+      
+      // ✅ Si hay más de un dictamen, ordenar por fecha descendente y tomar el primero (más reciente)
+      if (dictamenesData.length > 1) {
+        dictamenesData.sort((a, b) => {
+          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+          return dateB - dateA;
+        });
+        dictamenesData = dictamenesData.slice(0, 1);
+      }
+      
+      // ✅ Si no hay dictámenes y el capítulo está en correcciones, crear uno virtual con el comentario
+      if (dictamenesData.length === 0 && corrChapter) {
+        if (corrChapter.status === "CORRECCIONES" || corrChapter.status === "CORRECCIONES_SOLICITADAS_A_AUTOR") {
+          // Intentar obtener el comentario del capítulo
+          try {
+            const chapterRes = await api.get<Chapter>(`/autor/chapters/${chapterId}`, { headers: authHeaders() });
+            if (chapterRes.data.comment) {
+              dictamenesData = [{
+                id: 0,
+                folio: "CORRECCIONES",
+                chapter_id: chapterId,
+                evaluador_id: 0,
+                tipo: "INVESTIGACION",
+                decision: "CORRECCIONES",
+                status: "GENERADO",
+                promedio: null,
+                comentarios: chapterRes.data.comment,
+                conflicto_interes: null,
+                pdf_path: null,
+                signed_at: null,
+                created_at: chapterRes.data.updated_at || new Date().toISOString(),
+                updated_at: chapterRes.data.updated_at || new Date().toISOString(),
+              }];
+            }
+          } catch {
+            // Si no se puede obtener el comentario, continuar
+          }
+        }
+      }
+      
+      setDictamenes(dictamenesData);
     } catch (err: any) {
       setDictamenes([]);
       const msg = apiMsg(err, "No se pudieron cargar las correcciones.");
@@ -1527,15 +1566,38 @@ export default function MisEnviosAutor() {
                             <div className={styles.dictamenInfoLabel}>
                               <span>📊</span> Promedio
                             </div>
-                            <div className={styles.dictamenInfoValue}>
-                              <strong style={{ fontSize: "20px" }}>{d.promedio ?? "—"}</strong>
-                              <div style={{ marginTop: "8px", fontSize: "12px", color: "#64748b" }}>
-                                {d.signed_at ? `Firmado: ${fmtDate(d.signed_at)}` : "No firmado"}
-                              </div>
-                            </div>
+                            <div className={styles.dictamenInfoItem}>
+  <div className={styles.dictamenInfoLabel}>
+    <span>📊</span> Puntaje
+  </div>
+  <div className={styles.dictamenInfoValue}>
+    <strong style={{ fontSize: "20px" }}>{d.promedio ?? "—"}</strong>
+    <div style={{ marginTop: "4px", fontSize: "12px", color: "#64748b" }}>
+      Suma de 6 criterios
+    </div>
+  </div>
+</div>
+
+<div className={styles.dictamenInfoItem}>
+  <div className={styles.dictamenInfoLabel}>
+    <span>📈</span> Promedio
+  </div>
+  <div className={styles.dictamenInfoValue}>
+    <strong style={{ fontSize: "20px", color: "#2d9cdb" }}>
+      {d.promedio !== null && d.promedio !== undefined 
+        ? (Number(d.promedio) / 6).toFixed(1) 
+        : "—"}
+    </strong>
+    <div style={{ marginTop: "4px", fontSize: "12px", color: "#64748b" }}>
+      {d.signed_at ? `Firmado: ${fmtDate(d.signed_at)}` : "No firmado"}
+    </div>
+  </div>
+</div>
                           </div>
                         </div>
                       </div>
+
+  
 
                       <div className={styles.dictamenCardFooter}>
                         <div className={styles.dictamenFooterLeft}>
@@ -1544,19 +1606,7 @@ export default function MisEnviosAutor() {
                           </span>
                         </div>
 
-                        <div className={styles.dictamenFooterRight}>
-                          {d.pdf_path && (
-                            <button
-                              type="button"
-                              className={`${styles.dictamenActionBtn} ${styles.download}`}
-                              onClick={() => downloadDictamen(d)}
-                              disabled={loading}
-                              title="Descargar dictamen PDF"
-                            >
-                              <Icon name="download" /> Descargar PDF
-                            </button>
-                          )}
-                        </div>
+                        
                       </div>
                     </div>
                   ))}

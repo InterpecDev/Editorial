@@ -14,6 +14,9 @@ import Constancias from "./pages/Constancias";
 import Usuarios from "./pages/Usuarios";
 import MisEnviosAutor from "./pages/autor/MisEnviosAutor";
 import MisAsignacionesDictaminador from "./pages/dictaminador/MisAsignacionesDictaminador";
+import ArchivosEditorial from "./pages/ArchivosEditorial";
+
+import EnviarDocumentos from "./pages/EnviarDocumentos";
 
 import PrivateLayout from "./layout/PrivateLayout";
 
@@ -44,6 +47,10 @@ export default function App() {
 
           <Route path="/constancias" element={<Constancias />} />
           <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/archivos-firmados" element={<ArchivosEditorial />} />
+          <Route path="/enviar-documentos" element={<EnviarDocumentos />} />
+
+
         </Route>
 
         {/* 404 */}
