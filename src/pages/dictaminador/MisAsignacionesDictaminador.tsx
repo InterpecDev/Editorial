@@ -526,19 +526,26 @@ const ChapterItem = React.memo(
           <span className={styles.metaSep}>•</span>
           <span>Actualizado {fmtDate(chapter.updated_at)}</span>
 
-          {/* ✅ CORREO DEL AUTOR VISIBLE */}
+          {/* =====================================================
+              DATOS DEL AUTOR OCULTOS PARA EL DICTAMINADOR
+
+              Se conserva este bloque comentado por si posteriormente
+              se requiere volver a mostrar el nombre y correo del autor.
+
           {chapter.author_name && (
             <>
               <span className={styles.metaSep}>•</span>
               <span>Autor: <b>{chapter.author_name}</b></span>
             </>
           )}
+
           {chapter.author_email && (
             <>
               <span className={styles.metaSep}>•</span>
               <span style={{ color: "#2d9cdb" }}>📧 {chapter.author_email}</span>
             </>
           )}
+          ===================================================== */}
 
           {chapter.deadline_at ? (
             <>
