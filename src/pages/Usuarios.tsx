@@ -45,6 +45,62 @@ function mapApiUser(u: ApiUser): User {
   };
 }
 
+
+function getApiErrorMessage(
+  err: any,
+  fallback = "Ocurrió un error."
+): string {
+  const detail = err?.response?.data?.detail;
+
+  // Error normal del backend:
+  // { detail: "Ese correo ya existe." }
+  if (typeof detail === "string") {
+    return detail;
+  }
+
+  // Errores de validación Pydantic / FastAPI 422
+  if (Array.isArray(detail)) {
+    return detail
+      .map((item: any) => {
+        const field = Array.isArray(item?.loc)
+          ? item.loc[item.loc.length - 1]
+          : null;
+
+        const message =
+          typeof item?.msg === "string"
+            ? item.msg
+            : "Valor inválido";
+
+        if (field === "email") {
+          return "Ingresa un correo electrónico válido.";
+        }
+
+        if (field === "name") {
+          return "El nombre no es válido.";
+        }
+
+        if (field === "role") {
+          return "El rol seleccionado no es válido.";
+        }
+
+        if (field === "cvo_snii") {
+          return "El CVU/SNII no es válido.";
+        }
+
+        return field
+          ? `${field}: ${message}`
+          : message;
+      })
+      .join("\n");
+  }
+
+  if (typeof err?.message === "string") {
+    return err.message;
+  }
+
+  return fallback;
+}
+
 function fmtDate(dateStr: string) {
   if (!dateStr) return "—";
   const pure = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
@@ -382,6 +438,16 @@ export default function Usuarios() {
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email.trim())) {
+      await safeAlert.warning(
+        "Ingresa un correo válido. Ejemplo: usuario@dominio.com",
+        "Correo inválido"
+      );
+      return;
+    }
+
     if (role === "dictaminador" && !cvoSnii.trim()) {
       await safeAlert.warning("Para dictaminador, CVU/SNII es obligatorio (será su contraseña).", "Falta CVU/SNII");
       return;
@@ -424,8 +490,21 @@ export default function Usuarios() {
       }
     } catch (err: any) {
       safeAlert.close();
-      const msg = err?.response?.data?.detail ?? "No se pudo crear el usuario.";
-      await safeAlert.error(msg, "Error");
+
+      console.error(
+        "Error al crear usuario:",
+        err?.response?.data || err
+      );
+
+      const msg = getApiErrorMessage(
+        err,
+        "No se pudo crear el usuario."
+      );
+
+      await safeAlert.error(
+        msg,
+        "No se pudo crear el usuario"
+      );
     } finally {
       setSavingUser(false);
     }
