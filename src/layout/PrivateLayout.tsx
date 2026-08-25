@@ -88,9 +88,6 @@ function hasAccess(pathname: string, role: Role): boolean {
   return rule.roles.includes(role);
 }
 
-// ============================================
-// MAPA DE ÍCONOS PARA EL MENÚ
-// ============================================
 const menuIcons: Record<string, string> = {
   "/libros": "📚",
   "/capitulos": "📖",
@@ -106,6 +103,31 @@ export default function PrivateLayout() {
   const location = useLocation();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(
+    () => typeof window !== "undefined" ? window.innerWidth > 1200 : true
+  );
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Detectar si es móvil/tablet (≤ 980px)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1200);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 1200;
+      setIsMobile(mobile);
+
+      if (mobile) {
+        setSidebarVisible(false);
+        setSidebarOpen(false);
+      } else {
+        setSidebarVisible(true);
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -123,20 +145,19 @@ export default function PrivateLayout() {
   }, [sidebarOpen]);
 
   useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth >= 981) setSidebarOpen(false);
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSidebarOpen(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // Cerrar el menú automáticamente al cambiar de ruta
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
 
   const token = localStorage.getItem("token");
   const userRaw = localStorage.getItem("user");
@@ -200,9 +221,28 @@ export default function PrivateLayout() {
     nav("/login", { replace: true });
   };
 
-  const go = (path: string) => {
+  const closeSidebar = () => {
     setSidebarOpen(false);
+    setSidebarVisible(false);
+  };
+
+  const openSidebar = () => {
+    setSidebarVisible(true);
+    setSidebarOpen(true);
+  };
+
+  const go = (path: string) => {
+    if (isMobile) {
+      closeSidebar();
+    }
     nav(path);
+  };
+
+  const toggleDesktopSidebar = () => {
+    // Solo permitir colapsar en escritorio
+    if (!isMobile) {
+      setSidebarCollapsed((v) => !v);
+    }
   };
 
   const isStarts = (prefix: string) => location.pathname.startsWith(prefix);
@@ -216,12 +256,13 @@ export default function PrivateLayout() {
         { label: "Dictámenes", path: "/dictamenes" },
         { label: "Archivos ", path: "/archivos-firmados" },
         { label: "Usuarios", path: "/usuarios" },
-        { label: "Enviar Documentos", path: "/enviar-documentos" }, // ✅ NUEVO
-
+        { label: "Enviar Documentos", path: "/enviar-documentos" },
       ];
     }
-    if (user.role === "dictaminador") return [{ label: "Mis asignaciones", path: "/dictaminador" }, 
-    { label: "Documentos recibidos", path: "/dictaminador/documentos" } ];// ✅ NUEVO];
+    if (user.role === "dictaminador") return [
+      { label: "Mis asignaciones", path: "/dictaminador" },
+      { label: "Documentos recibidos", path: "/dictaminador/documentos" }
+    ];
     return [{ label: "Mis envíos", path: "/autor/mis-envios" }];
   }, [user]);
 
@@ -236,18 +277,28 @@ export default function PrivateLayout() {
   if (guard) return guard;
 
   return (
-    <div className={styles.shell} data-open={sidebarOpen ? "1" : "0"}>
-      {/* OVERLAY para móvil */}
-      <button
-        type="button"
-        className={styles.overlay}
-        data-open={sidebarOpen ? "1" : "0"}
-        aria-label="Cerrar menú"
-        onClick={() => setSidebarOpen(false)}
-      />
+    <div
+      className={styles.shell}
+      data-open={sidebarOpen ? "1" : "0"}
+      data-collapsed={!isMobile && sidebarCollapsed ? "1" : "0"}
+      data-sidebar-visible={sidebarVisible ? "1" : "0"}
+    >
+      {/* OVERLAY: solo existe mientras el menú compacto está abierto */}
+      {isMobile && sidebarVisible && sidebarOpen && (
+        <button
+          type="button"
+          className={styles.overlay}
+          aria-label="Cerrar menú"
+          onClick={closeSidebar}
+        />
+      )}
 
       {/* ===== SIDEBAR ===== */}
-      <aside className={styles.sidebar} data-open={sidebarOpen ? "1" : "0"}>
+      {sidebarVisible && (
+        <aside
+          className={styles.sidebar}
+          data-open={sidebarOpen ? "1" : "0"}
+        >
         {/* BRAND */}
         <div className={styles.brand}>
           <div className={styles.brandIcon}>📘</div>
@@ -255,10 +306,17 @@ export default function PrivateLayout() {
             <div className={styles.brandTitle}>Editorial</div>
             <div className={styles.brandSubtitle}>Administración</div>
           </div>
+          
+          {/* Botón collapse - SOLO EN ESCRITORIO */}
+
           <button
             type="button"
-            className={styles.closeBtn}
-            onClick={() => setSidebarOpen(false)}
+            className={styles.closeBtnUniversal}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              closeSidebar();
+            }}
             aria-label="Cerrar menú"
           >
             ✕
@@ -280,9 +338,10 @@ export default function PrivateLayout() {
                 className={`${styles.navItem} ${active ? styles.navItemActive : ""}`}
                 onClick={() => go(item.path)}
                 type="button"
+                title={!isMobile && sidebarCollapsed ? item.label : undefined}
               >
                 <span className={styles.navIcon}>{icon}</span>
-                {item.label}
+                <span className={styles.navText}>{item.label}</span>
                 {active && <span className={styles.navBadge}>●</span>}
               </button>
             );
@@ -307,26 +366,35 @@ export default function PrivateLayout() {
             type="button"
           >
             <span className={styles.logoutIcon}>🚪</span>
-            Cerrar sesión
+            <span className={styles.logoutText}>Cerrar sesión</span>
           </button>
         </div>
-      </aside>
+        </aside>
+      )}
 
-      {/* ===== MAIN - SIN HEADER ===== */}
+      {/* BOTÓN PARA VOLVER A MOSTRAR EL MENÚ */}
+      {!sidebarVisible && (
+        <button
+          type="button"
+          className={styles.reopenSidebarBtn}
+          aria-label="Mostrar menú"
+          onClick={openSidebar}
+        >
+          ☰
+        </button>
+      )}
+
+      {/* ===== MAIN ===== */}
       <main className={styles.main}>
-        {/* Solo el botón hamburguesa en móvil */}
+        {/* Header móvil con botón hamburguesa */}
         <div className={styles.mobileHeader}>
-          <button
-            type="button"
-            className={styles.menuBtn}
-            aria-label="Abrir menú"
-            onClick={() => setSidebarOpen((v) => !v)}
-          >
-            ☰
-          </button>
+          <div className={styles.mobileBrand}>
+            <span className={styles.mobileBrandIcon}>📘</span>
+            <span>Editorial</span>
+          </div>
         </div>
 
-        {/* CONTENIDO - Cada página maneja su propio header */}
+        {/* CONTENIDO */}
         <div className={styles.body}>
           <section className={styles.content}>
             <Outlet />

@@ -1,18 +1,4 @@
-/* =========================================================
-   PRIVATE LAYOUT
-   Panel administrativo - Editorial
-   ========================================================= */
-
-/* =========================================================
-   FUENTE
-   ========================================================= */
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
-
-
-/* =========================================================
-   VARIABLES
-   ========================================================= */
 
 .shell {
   --sidebar-bg: #0b1220;
@@ -146,6 +132,10 @@
   flex-shrink: 0;
 
   animation: sidebarIn 0.5s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+
+  transition:
+    width 0.25s ease,
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 
@@ -250,6 +240,8 @@
   flex-direction: column;
 
   gap: 3px;
+
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .brandTitle {
@@ -341,6 +333,8 @@
   );
 
   flex-shrink: 0;
+
+  transition: margin 0.25s ease;
 }
 
 
@@ -375,6 +369,8 @@
   letter-spacing: 0.1em;
 
   color: #64748b;
+
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 
@@ -523,6 +519,12 @@
   opacity: 1;
 }
 
+/* Texto del nav */
+.navText {
+  min-width: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
 
 /* Indicador activo */
 
@@ -545,6 +547,8 @@
     0 0 10px rgba(129, 140, 248, 0.5);
 
   flex-shrink: 0;
+
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 
@@ -654,6 +658,8 @@
   flex-direction: column;
 
   gap: 3px;
+
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .userName {
@@ -755,6 +761,10 @@
   font-size: 15px;
 }
 
+.logoutText {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
 
 /* =========================================================
    MAIN
@@ -784,6 +794,8 @@
   overflow-y: auto;
 
   overflow-x: hidden;
+
+  transition: margin-left 0.25s ease;
 }
 
 
@@ -847,6 +859,8 @@
 
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
 
   border-radius: 11px;
 
@@ -927,67 +941,178 @@
 
 
 /* =========================================================
-   RESPONSIVE - TABLET
+   BOTÓN COLLAPSE - SOLO ESCRITORIO
    ========================================================= */
 
-@media (max-width: 980px) {
+.collapseBtn {
+  margin-left: auto;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.collapseBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: scale(1.03);
+}
+
+
+/* =========================================================
+   ESTADOS DEL SIDEBAR COLAPSADO - SOLO ESCRITORIO
+   ========================================================= */
+
+/* Solo aplicar cuando NO es móvil */
+@media (min-width: 1201px) {
+  .shell[data-collapsed="1"] .sidebar {
+    width: 88px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .shell[data-collapsed="1"] .main {
+    margin-left: 88px;
+  }
+
+  .shell[data-collapsed="1"] .brand {
+    justify-content: center;
+    gap: 0;
+    padding: 10px 6px;
+  }
+
+  .shell[data-collapsed="1"] .brandText,
+  .shell[data-collapsed="1"] .navText,
+  .shell[data-collapsed="1"] .navLabel,
+  .shell[data-collapsed="1"] .userMeta,
+  .shell[data-collapsed="1"] .logoutText,
+  .shell[data-collapsed="1"] .navBadge {
+    display: none !important;
+  }
+
+  .shell[data-collapsed="1"] .brandIcon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .shell[data-collapsed="1"] .collapseBtn {
+    position: absolute;
+    top: 82px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    z-index: 2;
+  }
+
+  .shell[data-collapsed="1"] .collapseBtn:hover {
+    transform: translateX(-50%) scale(1.03);
+  }
+
+  .shell[data-collapsed="1"] .divider {
+    margin-top: 38px;
+  }
+
+  .shell[data-collapsed="1"] .navItem {
+    justify-content: center;
+    padding: 10px 8px;
+    gap: 0;
+  }
+
+  .shell[data-collapsed="1"] .navIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 19px;
+  }
+
+  .shell[data-collapsed="1"] .navItemActive::before {
+    left: -10px;
+  }
+
+  .shell[data-collapsed="1"] .userBox {
+    justify-content: center;
+    padding: 9px 6px;
+  }
+
+  .shell[data-collapsed="1"] .logoutBtn {
+    padding: 9px 8px;
+  }
+}
+
+.mobileBrand {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.mobileBrandIcon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: #ffffff;
+  font-size: 15px;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET Y MÓVIL
+   ========================================================= */
+
+@media (max-width: 1200px) {
   .shell {
     display: block;
-
     height: 100vh;
-
     overflow: hidden;
   }
 
-
   /* Overlay */
-
   .overlay {
     display: block;
   }
 
-
-  /* Sidebar */
-
+  /* Sidebar drawer: React lo monta solo cuando está abierto */
   .sidebar {
     width: min(86vw, 310px);
-
-    transform: translateX(-110%);
-
-    transition:
-      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    box-shadow:
-      12px 0 40px rgba(2, 6, 23, 0.3);
-
+    animation: none !important;
+    transform: none !important;
+    transition: none;
+    box-shadow: 12px 0 40px rgba(2, 6, 23, 0.3);
     padding: 18px 14px 16px;
-  }
-
-  .sidebar[data-open="1"] {
-    transform: translateX(0);
   }
 
 
   /* Cerrar */
-
   .closeBtn {
     display: inline-flex;
   }
 
-
   /* Main */
-
   .main {
     margin-left: 0;
-
     height: 100vh;
-
     width: 100%;
   }
 
-
   /* Header móvil */
-
   .mobileHeader {
     display: flex;
   }
@@ -996,9 +1121,7 @@
     display: inline-flex;
   }
 
-
   /* Body */
-
   .body,
   .body[data-panel="1"] {
     grid-template-columns: minmax(0, 1fr);
@@ -1006,6 +1129,98 @@
 
   .body {
     padding: 18px 20px 24px;
+  }
+
+  /* Mobile brand */
+  .mobileBrand {
+    display: inline-flex;
+  }
+
+  .mobileHeader {
+    justify-content: space-between;
+  }
+
+  .body {
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .content {
+    overflow-x: auto;
+  }
+
+  /* Ocultar botón collapse en móvil */
+  .collapseBtn {
+    display: none !important;
+  }
+
+  /* Asegurar que el estado collapsed no afecte en móvil */
+  .shell[data-collapsed="1"] .sidebar {
+    width: min(86vw, 310px);
+    padding: 18px 14px 16px;
+    transform: none !important;
+  }
+
+  .shell[data-collapsed="1"] .main {
+    margin-left: 0;
+  }
+
+  .shell[data-collapsed="1"] .brand {
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .shell[data-collapsed="1"] .brandText,
+  .shell[data-collapsed="1"] .navText,
+  .shell[data-collapsed="1"] .navLabel,
+  .shell[data-collapsed="1"] .userMeta,
+  .shell[data-collapsed="1"] .logoutText,
+  .shell[data-collapsed="1"] .navBadge {
+    display: flex !important;
+  }
+
+  .shell[data-collapsed="1"] .brandText,
+  .shell[data-collapsed="1"] .userMeta {
+    display: flex !important;
+  }
+
+  .shell[data-collapsed="1"] .navText {
+    display: block !important;
+  }
+
+  .shell[data-collapsed="1"] .navItem {
+    justify-content: flex-start;
+    padding: 10px 12px;
+    gap: 12px;
+  }
+
+  .shell[data-collapsed="1"] .userBox {
+    justify-content: flex-start;
+    padding: 10px;
+  }
+
+  .shell[data-collapsed="1"] .logoutBtn {
+    padding: 9px 12px;
+  }
+
+  .shell[data-collapsed="1"] .divider {
+    margin: 16px 0 10px;
+  }
+
+  .shell[data-collapsed="1"] .navItemActive::before {
+    left: -1px;
+  }
+
+  .shell[data-collapsed="1"] .brandIcon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .shell[data-collapsed="1"] .navIcon {
+    width: 24px;
+    height: 24px;
+    font-size: 17px;
   }
 }
 
@@ -1026,6 +1241,10 @@
   .navItem {
     min-height: 44px;
   }
+
+  .mobileBrand span:last-child {
+    display: none;
+  }
 }
 
 
@@ -1036,30 +1255,25 @@
 @media (max-width: 480px) {
   .sidebar {
     width: 100%;
-
-    padding:
-      14px
-      14px
-      16px;
+    padding: 14px 14px 16px;
   }
 
+  .shell[data-collapsed="1"] .sidebar {
+    width: 100%;
+    padding: 14px 14px 16px;
+  }
 
   /* Brand */
-
   .brand {
     padding: 9px;
-
     min-height: 60px;
-
     border-radius: 13px;
   }
 
   .brandIcon {
     width: 40px;
     height: 40px;
-
     border-radius: 11px;
-
     font-size: 18px;
   }
 
@@ -1071,30 +1285,23 @@
     font-size: 9px;
   }
 
-
   /* Navegación */
-
   .navLabel {
     padding-left: 10px;
   }
 
   .navItem {
     min-height: 46px;
-
     padding: 10px;
-
     font-size: 14px;
   }
 
   .navIcon {
     width: 23px;
-
     font-size: 17px;
   }
 
-
   /* User */
-
   .userBox {
     padding: 9px;
   }
@@ -1106,45 +1313,62 @@
 
   .userName {
     max-width: 210px;
-
     font-size: 13px;
   }
-
 
   /* Logout */
-
   .logoutBtn {
     min-height: 42px;
-
     font-size: 13px;
   }
 
-
   /* Mobile header */
-
   .mobileHeader {
     min-height: 52px;
-
     padding: 8px 12px;
   }
 
   .menuBtn {
     width: 36px;
     height: 36px;
-
     border-radius: 9px;
-
     font-size: 18px;
   }
 
-
   /* Content */
+  .body {
+    padding: 12px 12px 18px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE - ESCRITORIO MEDIANO
+   ========================================================= */
+
+@media (max-width: 1180px) and (min-width: 1201px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .main {
+    margin-left: 240px;
+  }
 
   .body {
-    padding:
-      12px
-      12px
-      18px;
+    padding: 20px 22px 26px;
+  }
+
+  .navItem {
+    font-size: 13px;
+  }
+
+  .shell[data-collapsed="1"] .sidebar {
+    width: 88px;
+  }
+
+  .shell[data-collapsed="1"] .main {
+    margin-left: 88px;
   }
 }
 
@@ -1156,13 +1380,11 @@
 @keyframes sidebarIn {
   from {
     opacity: 0;
-
     transform: translateX(-14px);
   }
 
   to {
     opacity: 1;
-
     transform: translateX(0);
   }
 }
@@ -1171,13 +1393,11 @@
 @keyframes contentFadeIn {
   from {
     opacity: 0;
-
     transform: translateY(6px);
   }
 
   to {
     opacity: 1;
-
     transform: translateY(0);
   }
 }
@@ -1190,9 +1410,9 @@
 .navItem:focus-visible,
 .logoutBtn:focus-visible,
 .menuBtn:focus-visible,
-.closeBtn:focus-visible {
+.closeBtn:focus-visible,
+.collapseBtn:focus-visible {
   outline: 2px solid #818cf8;
-
   outline-offset: 2px;
 }
 
@@ -1209,9 +1429,9 @@
   .logoutBtn,
   .menuBtn,
   .closeBtn,
-  .brandIcon {
+  .brandIcon,
+  .collapseBtn {
     animation: none !important;
-
     transition: none !important;
   }
 
@@ -1219,5 +1439,155 @@
   .logoutBtn:active,
   .menuBtn:active {
     transform: none !important;
+  }
+}
+
+/* =========================================================
+   CIERRE REAL DEL MENÚ EN TABLET / MÓVIL / PANTALLA DIVIDIDA
+   ========================================================= */
+@media (max-width: 1200px) {
+  .overlay {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  .sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 50 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .closeBtn {
+    display: inline-flex !important;
+    position: relative;
+    z-index: 2;
+  }
+
+  .collapseBtn {
+    display: none !important;
+  }
+
+  .main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .mobileHeader {
+    display: flex !important;
+  }
+
+  .menuBtn {
+    display: inline-flex !important;
+  }
+}
+
+
+/* =========================================================
+   CONTROL UNIVERSAL DEL SIDEBAR
+   La X oculta el sidebar SIEMPRE, sin depender del breakpoint.
+   ========================================================= */
+
+.closeBtnUniversal {
+  margin-left: auto;
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  cursor: pointer;
+  font-size: 14px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.closeBtnUniversal:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: scale(1.04);
+}
+
+.reopenSidebarBtn {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 5000;
+
+  width: 42px;
+  height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
+}
+
+.reopenSidebarBtn:hover {
+  background: #f8fafc;
+}
+
+.shell[data-sidebar-visible="0"] .main {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+
+.shell[data-sidebar-visible="1"] .main {
+  transition: margin-left 0.25s ease;
+}
+
+/* En móvil/pantalla dividida el sidebar abierto funciona como drawer */
+@media (max-width: 1200px) {
+  .shell[data-sidebar-visible="1"] .main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .sidebar {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .closeBtnUniversal {
+    display: inline-flex !important;
+  }
+
+  .mobileHeader {
+    padding-left: 64px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .reopenSidebarBtn {
+    top: 9px;
+    left: 9px;
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .mobileHeader {
+    padding-left: 56px !important;
   }
 }
