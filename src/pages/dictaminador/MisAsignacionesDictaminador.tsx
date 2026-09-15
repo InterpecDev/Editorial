@@ -895,10 +895,8 @@ function MisAsignacionesDictaminadorContent() {
       }
 
       if (actionType === "APROBAR") {
-        const result = await alertService.confirm("¿Estás seguro de aprobar este capítulo?", "Aprobar capítulo");
-        if (!result.isConfirmed) return;
-
         await patchStatus(selected.id, "APROBADO");
+        setActionOpen(false);
         alertService.success("Capítulo aprobado correctamente");
       }
 
@@ -908,13 +906,8 @@ function MisAsignacionesDictaminadorContent() {
           return;
         }
 
-        const result = await alertService.confirm(
-          "¿Estás seguro de rechazar este capítulo? Esta acción no se puede deshacer.",
-          "Rechazar capítulo"
-        );
-        if (!result.isConfirmed) return;
-
         await patchStatus(selected.id, "RECHAZADO", { comment: comment.trim() });
+        setActionOpen(false);
         alertService.success("Capítulo rechazado");
       }
 
